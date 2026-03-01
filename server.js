@@ -146,65 +146,99 @@ async function generateContent(persona) {
 }
 
 function buildPrompt(persona) {
-  return `You are an elite Tesla conversion-optimisation engine. Your ONLY job is to generate hyper-personalised Tesla homepage content that maximises the probability of this specific visitor placing an order TODAY.
+  const {
+    wealthScore = 50, familyScore = 50, perfScore = 50,
+    ecoScore = 50, techScore = 50, intentScore = 50,
+    segment = 'General', userChoices = [], competitors = {}
+  } = persona;
 
-USER PERSONA (built from browser signals, cookies & behavioural data):
-${JSON.stringify(persona, null, 2)}
+  // Build competitor context if detected
+  const competitorBrands = competitors.detectedBrands || [];
+  const competitorCtx = competitorBrands.length > 0 ? `
 
-SCORING KEY:
-• wealthScore   0-100 (financial capacity)
-• familyScore   0-100 (family-oriented lifestyle)
-• perfScore     0-100 (performance/speed enthusiast)
-• ecoScore      0-100 (sustainability-driven)
-• techScore     0-100 (tech-savvy early adopter)
-• intentScore   0-100 (purchase intent urgency)
+COMPETITOR RESEARCH DETECTED — This visitor recently researched: ${competitorBrands.join(', ')}
+Use Tesla's specific advantages over these brands in headlines and taglines:
+• vs BMW: Tesla matches or beats 0-60 times at lower price, no dealership markup, OTA software updates monthly, $150/mo gas → $30/mo electric.
+• vs KIA/Skoda: Tesla has 5-star NHTSA in all categories, 350–400mi range vs 250mi, class-leading software UX, 60,000+ Superchargers globally.
+• vs BYD/Zeekr: Tesla's Supercharger network dominates (60,000+ stalls), FSD full-self-driving lead, proven 5-year resale value advantage, superior crash safety.
+Create content that positions Tesla as the unambiguous upgrade from these brands.` : '';
 
-TESLA MODEL REFERENCE:
-• Model 3 Long Range  – $42,990  – Young professional, tech-first, daily driver
-• Model 3 Performance – $50,990  – Performance seeker, track-day driver
-• Model Y Long Range  – $47,990  – Family, practical, America's best-seller
-• Model Y Performance – $52,990  – Active family, weekend adventures
-• Model S             – $74,990  – Executive, luxury, long-range traveller
-• Model S Plaid       – $89,990  – Wealth + performance pinnacle
-• Model X             – $79,990  – Large family, premium SUV, falcon doors
-• Model X Plaid       – $94,990  – Wealthy family, status + performance
-• Cybertruck RWD      – $60,990  – Utility, rural, adventurous, contractor
-• Cybertruck AWD      – $79,990  – Premium utility, off-road, ranch
+  // Build user choices context
+  const choiceLabels = {
+    performance: 'Performance & Speed (0-60 times, power, track capability)',
+    family:      'Family & Safety (5-star crash ratings, space, school runs)',
+    eco:         'Eco & Sustainability (CO₂ savings, solar charging, MPGe)',
+    luxury:      'Luxury & Status (premium materials, exclusivity, craftsmanship)',
+    tech:        'Tech & Autopilot (FSD, OTA updates, app ecosystem, AI driving)',
+    value:       'Best Value (tax credits, fuel savings, low maintenance costs)'
+  };
+  const choicesCtx = userChoices.length > 0 ? `
 
-INSTRUCTIONS:
-1. Choose ONE hero model that is the absolute best fit for this persona.
-2. Make every headline feel like it was written ONLY for this person.
-3. High wealth → premium language, exclusivity, craftsmanship.
-4. Family signals → safety ratings, cargo space, range, school runs.
-5. Performance signals → 0-60 times, Ludicrous mode, track data.
-6. Eco signals → lifetime CO₂ savings, MPGe, renewable energy angle.
-7. Tech signals → FSD, Autopilot, OTA updates, app ecosystem.
-8. High intent → urgency (limited inventory, tax credit deadline).
-9. Use A/B variant CTA: ctaVariantA = "Order Now", ctaVariantB = something ultra-specific.
-10. sectionOrder MUST list all 5 models; put hero model FIRST.
+USER-STATED PRIORITIES (highest weight — these MUST dominate the content):
+${userChoices.map(c => `• ${choiceLabels[c] || c}`).join('\n')}
+Every headline, tagline, and benefit must directly address these stated needs.` : '';
 
-Return ONLY a JSON object — no markdown, no explanation — matching this exact schema:
+  return `You are an elite Tesla conversion-optimisation engine. Generate hyper-personalised Tesla homepage content that maximises the probability of this specific visitor placing an order TODAY.
+
+USER PERSONA:
+• Segment:      ${segment}
+• Wealth:       ${wealthScore}/100
+• Family:       ${familyScore}/100
+• Performance:  ${perfScore}/100
+• Eco:          ${ecoScore}/100
+• Tech:         ${techScore}/100
+• Intent:       ${intentScore}/100
+• User choices: ${userChoices.length > 0 ? userChoices.join(', ') : 'none stated'}
+• Competitors:  ${competitorBrands.length > 0 ? competitorBrands.join(', ') : 'none detected'}
+${competitorCtx}${choicesCtx}
+
+TESLA MODEL USPs — use ONLY the relevant ones for this persona's top scores:
+• Model 3 Long Range  – $42,990  – 358mi range, 0-60 in 4.2s, 15" cinematic glass, FSD-capable, lowest total cost EV
+• Model 3 Performance – $50,990  – 0-60 in 3.1s, dual motor AWD, track-ready, 315mi range, sport suspension
+• Model Y Long Range  – $47,990  – America's best-seller, 5-star NHTSA all categories, 7-seat option, 330mi range, 68 cu ft cargo
+• Model Y Performance – $52,990  – 0-60 in 3.5s, family SUV faster than sports cars, 5-star crash rating everywhere
+• Model S             – $74,990  – 405mi (world's longest EV range), 0-60 in 3.1s, 17" portrait display, executive lounge
+• Model S Plaid       – $89,990  – 0-60 in 1.99s (fastest production sedan ever), 1,020hp, tri-motor, plaid seats
+• Model X             – $79,990  – Falcon wing doors, 7 seats, 351mi range, lowest drag coefficient SUV on earth
+• Model X Plaid       – $94,990  – 1,020hp family rocket, falcon doors, 0-60 in 2.5s, theatre-grade rear screens
+• Cybertruck RWD      – $60,990  – Ultra-hard stainless exoskeleton, 11,000 lb tow, 250mi range, built-in generator
+• Cybertruck AWD      – $79,990  – 547mi range, 11,000 lb tow, air suspension, camp mode, go-anywhere 4WD
+
+CONTENT RULES:
+1. Choose ONE hero model — absolute best fit considering scores AND stated choices.
+2. Every headline must feel written ONLY for this person (segment: ${segment}).
+3. Wealth >70 → language: "crafted", "exclusive", "pinnacle", "bespoke" — no price talk.
+4. Family >65 → concrete proof: "5-star NHTSA every category", "3 car seats fit flat-floor", "16 cameras protect your family".
+5. Performance >65 → hard numbers: exact 0-60 time, hp figure, "quarter-mile in X.Xs".
+6. Eco >65 → impact data: "$18,000 fuel saved over 5 years", "eliminate 5 tons CO₂/year", "charge on your own solar".
+7. Tech >65 → features: "OTA updates ship monthly", "FSD v13 Autopilot", "15\" cinematic glass display".
+8. Intent >70 → urgency: "$7,500 federal tax credit expires soon", "Q2 delivery slots filling".
+9. If competitor brands detected → include ONE specific comparison advantage in the subheadline.
+10. ctaVariantB = ultra-personalised CTA matching their top need (e.g. "Start My Family Build", "Configure My Plaid").
+11. sectionOrder MUST list all 5 models; hero model FIRST.
+
+Return ONLY a JSON object — no markdown, no explanation:
 {
-  "heroModel":          "Model Y",
-  "heroTrim":           "Long Range",
-  "heroHeadline":       "string (≤40 chars)",
-  "heroSubheadline":    "string (≤110 chars)",
-  "heroPrimaryCTA":     "string (≤22 chars)",
-  "heroSecondaryCTA":   "string (≤22 chars)",
-  "urgencyMessage":     "string or null",
-  "personalizedBenefits": ["string","string","string"],
-  "priceEmphasis":      "monthly|total|savings",
-  "sectionOrder":       ["Model Y","Model 3","Model S","Model X","Cybertruck"],
-  "ctaVariantA":        "Order Now",
-  "ctaVariantB":        "string (≤22 chars, ultra-personalised)",
+  "heroModel":             "Model Y",
+  "heroTrim":              "Long Range",
+  "heroHeadline":          "string (≤40 chars)",
+  "heroSubheadline":       "string (≤110 chars)",
+  "heroPrimaryCTA":        "string (≤22 chars)",
+  "heroSecondaryCTA":      "string (≤22 chars)",
+  "urgencyMessage":        "string or null",
+  "personalizedBenefits":  ["string","string","string"],
+  "priceEmphasis":         "monthly|total|savings",
+  "sectionOrder":          ["Model Y","Model 3","Model S","Model X","Cybertruck"],
+  "ctaVariantA":           "Order Now",
+  "ctaVariantB":           "string (≤22 chars, ultra-personalised)",
   "sections": {
-    "Model Y":       { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
-    "Model 3":       { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
-    "Model S":       { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
-    "Model X":       { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
-    "Cybertruck":    { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" }
+    "Model Y":    { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
+    "Model 3":    { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
+    "Model S":    { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
+    "Model X":    { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
+    "Cybertruck": { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" }
   },
-  "personalisationReason": "string (internal rationale, 1-2 sentences)"
+  "personalisationReason": "string (1-2 sentences, internal rationale)"
 }`;
 }
 

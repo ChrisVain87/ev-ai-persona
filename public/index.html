@@ -275,6 +275,108 @@
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════
+     CHOICES MODAL — Shown before persona build if first visit
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="choices-modal" class="choices-modal" role="dialog" aria-modal="true"
+     aria-labelledby="choices-title" style="display:none">
+  <div class="choices-modal-inner">
+    <div class="choices-header">
+      <div class="choices-logo">TESLA</div>
+      <h2 id="choices-title">What matters most to you?</h2>
+      <p>Select <strong>3 priorities</strong> to personalise your Tesla experience</p>
+    </div>
+    <div class="choices-grid">
+      <button class="choice-card" data-choice="performance" type="button">
+        <span class="choice-icon">⚡</span>
+        <strong>Performance &amp; Speed</strong>
+        <span>0-60 in seconds, not minutes</span>
+      </button>
+      <button class="choice-card" data-choice="family" type="button">
+        <span class="choice-icon">👨‍👩‍👧</span>
+        <strong>Family &amp; Safety</strong>
+        <span>5-star safety, space for everyone</span>
+      </button>
+      <button class="choice-card" data-choice="eco" type="button">
+        <span class="choice-icon">🌿</span>
+        <strong>Eco &amp; Sustainability</strong>
+        <span>Zero emissions, solar charged</span>
+      </button>
+      <button class="choice-card" data-choice="luxury" type="button">
+        <span class="choice-icon">💎</span>
+        <strong>Luxury &amp; Status</strong>
+        <span>Premium materials, exclusive ownership</span>
+      </button>
+      <button class="choice-card" data-choice="tech" type="button">
+        <span class="choice-icon">🤖</span>
+        <strong>Tech &amp; Autopilot</strong>
+        <span>FSD, OTA updates, AI driving</span>
+      </button>
+      <button class="choice-card" data-choice="value" type="button">
+        <span class="choice-icon">💰</span>
+        <strong>Best Value</strong>
+        <span>Tax credits, fuel savings, low cost</span>
+      </button>
+    </div>
+    <div class="choices-footer">
+      <span id="choices-count">0 of 3 selected</span>
+      <button id="choices-continue" class="choices-continue-btn" disabled type="button">
+        Continue →
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PERSONA RESULT CARD — shown after persona analysis completes
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="persona-result" class="persona-result" role="complementary"
+     aria-label="Your AI Profile" style="display:none">
+  <div id="persona-result-body"></div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     AI ASSISTANT FLOATING BUTTON
+     ═══════════════════════════════════════════════════════════════════════ -->
+<button id="ai-assistant-btn" class="ai-assistant-btn" type="button"
+        style="display:none" aria-label="Open AI Persona Assistant"
+        onclick="TeslaAI.toggleAssistant()">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+       stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <circle cx="12" cy="12" r="10"/>
+    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+    <line x1="12" y1="17" x2="12.01" y2="17"/>
+  </svg>
+  AI Profile
+</button>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     AI ASSISTANT PANEL — slide-in drawer showing all data sources
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="ai-panel-overlay" class="ai-panel-overlay" style="display:none"
+     onclick="TeslaAI.closeAssistant()"></div>
+
+<div id="ai-assistant-panel" class="ai-assistant-panel"
+     role="dialog" aria-label="AI Persona Assistant" aria-hidden="true">
+  <div class="ai-panel-header">
+    <div>
+      <div class="ai-panel-title">⚡ AI Persona Assistant</div>
+      <div class="ai-panel-subtitle">How we built your personalised experience</div>
+    </div>
+    <button class="ai-panel-close" onclick="TeslaAI.closeAssistant()"
+            aria-label="Close panel">✕</button>
+  </div>
+  <div class="ai-panel-body" id="ai-panel-body">
+    <p style="color:rgba(255,255,255,0.35);padding:20px;font-size:0.8rem">
+      Loading your profile data…
+    </p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
      DEBUG PANEL — Activate via ?debug=1 or clicking "AI Debug" in footer
      ═══════════════════════════════════════════════════════════════════════ -->
 <div id="debug-panel" role="complementary" aria-label="AI Persona Debug">

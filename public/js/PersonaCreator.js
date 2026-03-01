@@ -15,7 +15,7 @@ class PersonaCreator {
   }
 
   // ── Public entry point ───────────────────────────────────────────────────
-  async build() {
+  async build(userChoices = []) {
     this.onProgress('Collecting browser signals…');
     const device    = this._collectDevice();
 
@@ -31,8 +31,11 @@ class PersonaCreator {
     this.onProgress('Checking connectivity…');
     const network   = await this._collectNetwork();
 
+    this.onProgress('Detecting competitor research…');
+    const competitors = this._collectCompetitors();
+
     this.onProgress('Scoring persona dimensions…');
-    const scores    = this._scorePersona({ device, session, traffic, history, network });
+    const scores    = this._scorePersona({ device, session, traffic, history, network, competitors, userChoices });
 
     this.onProgress('Selecting model recommendation…');
     const recommendation = this._recommend(scores, history);
@@ -45,6 +48,8 @@ class PersonaCreator {
       traffic,
       history,
       network,
+      competitors,
+      userChoices,
       scores,
       recommendation,
       // Flattened scores at top level for prompt readability
@@ -180,6 +185,68 @@ class PersonaCreator {
     };
   }
 
+  // ── Competitor website research signals ──────────────────────────────────
+  _collectCompetitors() {
+    const ns  = this.namespace;
+    const ref = document.referrer;
+    const get     = (k)      => { try { return localStorage.getItem(`${ns}_${k}`); } catch { return null; } };
+    const set     = (k, v)   => { try { localStorage.setItem(`${ns}_${k}`, v); }   catch {} };
+    const getJSON = (k, def) => { try { return JSON.parse(get(k)) || def; }         catch { return def; } };
+
+    const COMPETITORS = {
+      'bmw.com':    { brand: 'BMW',   segment: 'luxury_performance', scoreBoosts: { wealth: 10, performance: 15, intent: 8 } },
+      'bmwusa.com': { brand: 'BMW',   segment: 'luxury_performance', scoreBoosts: { wealth: 10, performance: 15, intent: 8 } },
+      'kia.com':    { brand: 'KIA',   segment: 'value_family',       scoreBoosts: { family: 12, eco: 8,  intent: 6 } },
+      'skoda.com':  { brand: 'Skoda', segment: 'practical_family',   scoreBoosts: { family: 12, eco: 5,  intent: 6 } },
+      'byd.com':    { brand: 'BYD',   segment: 'ev_tech',            scoreBoosts: { eco: 15, tech: 10, intent: 10 } },
+      'byd.eu':     { brand: 'BYD',   segment: 'ev_tech',            scoreBoosts: { eco: 15, tech: 10, intent: 10 } },
+      'zeekr.com':  { brand: 'Zeekr', segment: 'premium_ev_tech',    scoreBoosts: { tech: 15, performance: 10, intent: 10 } }
+    };
+
+    // Check if arriving directly from a competitor site
+    let refHost = '';
+    let currentVisitFrom = null;
+    try { refHost = ref ? new URL(ref).hostname.replace('www.', '') : ''; } catch { /* ignore */ }
+
+    for (const [domain, info] of Object.entries(COMPETITORS)) {
+      if (refHost && refHost.includes(domain.replace('www.', ''))) {
+        currentVisitFrom = info.brand;
+        const visits = getJSON('competitor_visits', []);
+        const existing = visits.find(v => v.brand === info.brand);
+        if (existing) {
+          existing.ts = Date.now();
+        } else {
+          visits.push({ brand: info.brand, segment: info.segment, ts: Date.now() });
+        }
+        set('competitor_visits', JSON.stringify(visits.slice(-10)));
+        break;
+      }
+    }
+
+    // Load stored competitor visit history
+    const storedVisits = getJSON('competitor_visits', []);
+    const scoreBoosts  = { wealth: 0, family: 0, performance: 0, eco: 0, tech: 0, intent: 0 };
+    const detectedBrands = [];
+
+    for (const visit of storedVisits) {
+      const conf = Object.values(COMPETITORS).find(c => c.brand === visit.brand);
+      if (conf) {
+        detectedBrands.push(visit.brand);
+        for (const [key, val] of Object.entries(conf.scoreBoosts)) {
+          scoreBoosts[key] = Math.min(25, (scoreBoosts[key] || 0) + val); // cap per dimension
+        }
+      }
+    }
+
+    return {
+      currentVisitFrom,
+      detectedBrands:      [...new Set(detectedBrands)],
+      visitHistory:        storedVisits,
+      scoreBoosts,
+      isCompetitorShopper: detectedBrands.length > 0
+    };
+  }
+
   // ── Persistent history signals (localStorage) ────────────────────────────
   _collectHistory() {
     const ns = this.namespace;
@@ -228,7 +295,7 @@ class PersonaCreator {
   }
 
   // ── Scoring engine ────────────────────────────────────────────────────────
-  _scorePersona({ device, session, traffic, history, network }) {
+  _scorePersona({ device, session, traffic, history, network, competitors = {}, userChoices = [] }) {
     let wealth = 50, family = 30, performance = 30, eco = 30, tech = 40, intent = 20;
 
     // ── Wealth signals ──────────────────────────────────────────────
@@ -290,6 +357,26 @@ class PersonaCreator {
     if (traffic.intentKeywords.cyber)      cyber += 30;
     if (/truck|pickup|f150|ram1500|4x4|offroad/.test(traffic.referrerHost)) cyber += 20;
     if (device.timezone && /mountain|pacific|central/.test(device.timezone.toLowerCase())) cyber += 8;
+
+    // ── User-selected preference boosts ─────────────────────────────────────
+    if (userChoices.includes('performance')) performance += 25;
+    if (userChoices.includes('family'))      family      += 25;
+    if (userChoices.includes('eco'))         eco         += 25;
+    if (userChoices.includes('luxury'))      wealth      += 20;
+    if (userChoices.includes('tech'))        tech        += 25;
+    if (userChoices.includes('value'))       intent      += 10;
+
+    // ── Competitor shopping signals ──────────────────────────────────────────
+    if (competitors.isCompetitorShopper) {
+      intent += 12;  // comparing = serious shopper
+      const cb = competitors.scoreBoosts || {};
+      wealth      += (cb.wealth      || 0);
+      family      += (cb.family      || 0);
+      performance += (cb.performance || 0);
+      eco         += (cb.eco         || 0);
+      tech        += (cb.tech        || 0);
+      intent      += (cb.intent      || 0);
+    }
 
     // Clamp all scores 0-100
     const clamp = (n) => Math.min(100, Math.max(0, Math.round(n)));
