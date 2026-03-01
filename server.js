@@ -367,8 +367,18 @@ function chiSquareSignificance(nA, cA, nB, cB) {
 }
 
 // ─── Start server ─────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n🚀 Tesla AI Persona Engine running on http://localhost:${PORT}`);
-  console.log(`   API key: ${process.env.ANTHROPIC_API_KEY ? '✅ set' : '⚠️  NOT SET — using fallback content'}`);
+const server = app.listen(PORT, () => {
+  console.log(`\nTesla AI Persona Engine running on http://localhost:${PORT}`);
+  console.log(`   API key: ${process.env.ANTHROPIC_API_KEY ? 'SET' : 'NOT SET — using fallback content'}`);
   console.log(`   A/B split: ${AB_SPLIT}% get AI personalisation\n`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\nERROR: Port ${PORT} is already in use.`);
+    console.error(`Run this to fix it:  npx kill-port ${PORT}\nThen restart with:   npm start\n`);
+  } else {
+    console.error('Server error:', err.message);
+  }
+  process.exit(1);
 });
