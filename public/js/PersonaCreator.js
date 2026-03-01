@@ -59,7 +59,8 @@ class PersonaCreator {
       ecoScore:       scores.eco,
       techScore:      scores.tech,
       intentScore:    scores.intent,
-      segment:        this._segment(scores)
+      segment:        this._segment(scores),
+      isFirstVisit:   !history.isReturning && (history.visitCount || 0) <= 1
     };
 
     this._persistHistory(persona);
@@ -393,22 +394,40 @@ class PersonaCreator {
 
   // ── Model recommendation ─────────────────────────────────────────────────
   _recommend(scores, history) {
-    const { wealth, family, performance, eco, tech, intent, cyber } = scores;
+    const { wealth, family, performance, eco, tech } = scores;
 
-    if (history.cartModel)           return { model: history.cartModel, trim: 'Long Range', reason: 'cart_abandoned' };
-    if (history.configuredModel)     return { model: history.configuredModel, trim: 'Long Range', reason: 'configured' };
+    // Resume abandoned or configured model (Y/3 only)
+    if (history.cartModel && ['Model Y','Model 3'].includes(history.cartModel))
+      return { model: history.cartModel, trim: 'Premium Long Range', reason: 'cart_abandoned' };
+    if (history.configuredModel && ['Model Y','Model 3'].includes(history.configuredModel))
+      return { model: history.configuredModel, trim: 'Standard Long Range', reason: 'configured' };
 
-    // Decision matrix
-    if (wealth >= 75 && performance >= 70)   return { model: 'Model S', trim: 'Plaid',        reason: 'wealth_performance' };
-    if (wealth >= 70 && family >= 65)        return { model: 'Model X', trim: 'Long Range',   reason: 'wealth_family' };
-    if (family >= 65 && wealth < 70)         return { model: 'Model Y', trim: 'Long Range',   reason: 'family_value' };
-    if (performance >= 70 && wealth < 70)    return { model: 'Model 3', trim: 'Performance',  reason: 'performance_value' };
-    if (cyber >= 55)                         return { model: 'Cybertruck', trim: 'AWD',        reason: 'utility_outdoor' };
-    if (eco >= 65 && wealth < 60)            return { model: 'Model 3', trim: 'Long Range',   reason: 'eco_conscious' };
-    if (tech >= 65 && wealth < 70)           return { model: 'Model 3', trim: 'Long Range',   reason: 'tech_early_adopter' };
-    if (wealth >= 60)                        return { model: 'Model Y', trim: 'Long Range',   reason: 'mid_wealth_practical' };
+    // Decision matrix — Model Y and Model 3 only
+    if (performance >= 70)
+      return { model: 'Model 3', trim: 'Premium Performance', reason: 'performance_value' };
 
-    return { model: 'Model Y', trim: 'Standard Range', reason: 'default_bestseller' };
+    if (family >= 65 && wealth >= 65)
+      return { model: 'Model Y', trim: 'Premium Long Range', reason: 'wealth_family' };
+
+    if (family >= 65)
+      return { model: 'Model Y', trim: 'Standard Long Range', reason: 'family_value' };
+
+    if (tech >= 70 && family < 55)
+      return { model: 'Model 3', trim: 'Premium AWD', reason: 'tech_early_adopter' };
+
+    if (wealth >= 70)
+      return { model: 'Model Y', trim: 'Premium Long Range', reason: 'mid_wealth_practical' };
+
+    if (eco >= 65 && wealth < 55)
+      return { model: 'Model 3', trim: 'Standard Long Range', reason: 'eco_conscious' };
+
+    if (tech >= 65)
+      return { model: 'Model 3', trim: 'Premium Long Range', reason: 'tech_savvy' };
+
+    if (wealth >= 55)
+      return { model: 'Model Y', trim: 'Standard Long Range', reason: 'practical_suv' };
+
+    return { model: 'Model Y', trim: 'Standard Long Range', reason: 'default_bestseller' };
   }
 
   // ── Segment label ─────────────────────────────────────────────────────────
