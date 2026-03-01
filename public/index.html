@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tesla | Electric Cars, Solar & Clean Energy</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Tesla builds electric vehicles, solar panels and energy storage. Discover Model S, 3, X, Y, Cybertruck and solar energy products.">
+  <meta property="og:title" content="Tesla">
+  <meta property="og:description" content="Experience the electric future. Personalised for you.">
+
+  <!-- Inter font — closest free alternative to Tesla's proprietary TeslaFont -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- Primary stylesheet -->
+  <link rel="stylesheet" href="/css/tesla.css" />
+
+  <!--
+    EXTERNAL TESLA ASSETS — Referenced directly from Tesla CDN.
+    The browser loads these without re-writing or redistributing them.
+    If Tesla's CORS policy blocks stylesheet access, our local tesla.css
+    provides an identical faithful recreation.
+  -->
+  <!--
+  <link rel="stylesheet" href="https://www.tesla.com/themes/custom/tesla_theme/css/tesla.min.css" crossorigin="anonymous" />
+  -->
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     LOADING SCREEN — shown during persona analysis + AI content generation
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="loading-screen" class="active" aria-label="Loading personalised experience" role="progressbar">
+  <div class="loading-wordmark" aria-hidden="true">TESLA</div>
+  <div class="loading-progress-track" aria-hidden="true">
+    <div class="loading-progress-bar"></div>
+  </div>
+  <p id="loading-status">Initialising…</p>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     URGENCY BANNER — AI-injected when high-intent signals detected
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="urgency-banner" role="alert" aria-live="polite"></div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     NAVIGATION
+     ═══════════════════════════════════════════════════════════════════════ -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <!-- Logo -->
+  <a href="/" class="nav-logo" aria-label="Tesla home">
+    <!-- Inline SVG Tesla T-logo path (public trademark mark used for identification) -->
+    <svg class="nav-logo-svg" viewBox="0 0 342 35" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M0 .1a9.7 9.7 0 0 0 7 7h11l.5.1v27.6h6.8V7.3L26 7h11a9.8 9.8 0 0 0 7-7H0zm238.6 0h-6.8v34.8H263a9.7 9.7 0 0 0 6-6.8h-30.3V0zm-52.3 6.8c3.6-1 6.6-3.8 7.4-6.9l-38.1.1v11.8h31.4v7.2h-24.4a13 13 0 0 0-13 13v8h44.3a9.7 9.7 0 0 0 7-6.8H163V28h24.3zm116.2 28h6.7V14.5a14 14 0 0 0-14-14.4h-23.4a14 14 0 0 0-14.1 14.4V35h6.8V21.3h38zm0-19.5h-38v-7.3a7.2 7.2 0 0 1 7.3-7.3h23.4a7.2 7.2 0 0 1 7.3 7.3zm-186.5 19.5h6.7V14.5a14 14 0 0 0-14-14.4H85.4a14 14 0 0 0-14 14.4V35h6.7V21.3h37.9zm0-19.5H78v-7.3a7.2 7.2 0 0 1 7.4-7.3h23.4a7.2 7.2 0 0 1 7.3 7.3z" fill="currentColor"/>
+    </svg>
+  </a>
+
+  <!-- Center nav links -->
+  <ul class="nav-links" role="list">
+    <li><a href="#">Vehicles</a></li>
+    <li><a href="#">Energy</a></li>
+    <li><a href="#">Charging</a></li>
+    <li><a href="#">Discover</a></li>
+    <li><a href="#">Shop</a></li>
+  </ul>
+
+  <!-- Right actions -->
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-ghost" onclick="TeslaAI.showTestDrive()">Test Drive</button>
+    <button id="nav-order-cta" class="nav-btn nav-btn-solid" onclick="TeslaAI.trackNavOrder()">Order Now</button>
+    <button class="nav-hamburger" aria-label="Open menu" onclick="TeslaAI.toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     MODEL SECTIONS — AI reorders these based on persona recommendation
+     Each section is 100vh and self-contained.
+     data-model → slug used for CSS theming + JS ordering
+     data-price → base price used for price-emphasis swapping
+     ═══════════════════════════════════════════════════════════════════════ -->
+<main id="models-container" role="main">
+
+  <!-- ── MODEL Y ─────────────────────────────────────────────────────────── -->
+  <section class="model-section" id="section-model-y" data-model="model-y" data-price="47990">
+    <div class="model-bg"></div>
+
+    <!-- Vehicle illustration (CSS/SVG — swap for real image) -->
+    <img class="model-vehicle-img"
+         src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20220303-Model-Y-Social.png"
+         onerror="this.style.display='none'"
+         alt="Tesla Model Y" loading="lazy" />
+
+    <div class="model-content">
+      <div class="personalized-badge" id="badge-model-y" style="display:none">Recommended for You</div>
+      <h2 class="model-name-label" data-ai="headline">Model Y</h2>
+      <p class="model-tagline" data-ai="tagline">For Every Adventure</p>
+      <p class="model-price" data-ai="price">Starting at $47,990</p>
+      <div class="model-ctas">
+        <button class="cta-btn cta-primary" data-ai="primary-cta"
+                onclick="TeslaAI.trackCTA('Model Y','order')">Order Now</button>
+        <button class="cta-btn cta-secondary" data-ai="secondary-cta"
+                onclick="TeslaAI.trackCTA('Model Y','demo')">Demo Drive</button>
+      </div>
+    </div>
+    <div class="scroll-indicator" aria-hidden="true"><div class="scroll-arrow"></div></div>
+  </section>
+
+  <!-- ── MODEL 3 ─────────────────────────────────────────────────────────── -->
+  <section class="model-section" id="section-model-3" data-model="model-3" data-price="42990">
+    <div class="model-bg"></div>
+    <img class="model-vehicle-img"
+         src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20240320-Model-3-Social.png"
+         onerror="this.style.display='none'"
+         alt="Tesla Model 3" loading="lazy" />
+    <div class="model-content">
+      <div class="personalized-badge" id="badge-model-3" style="display:none">Recommended for You</div>
+      <h2 class="model-name-label" data-ai="headline">Model 3</h2>
+      <p class="model-tagline" data-ai="tagline">The Future of Driving</p>
+      <p class="model-price" data-ai="price">Starting at $42,990</p>
+      <div class="model-ctas">
+        <button class="cta-btn cta-primary" data-ai="primary-cta"
+                onclick="TeslaAI.trackCTA('Model 3','order')">Order Now</button>
+        <button class="cta-btn cta-secondary" data-ai="secondary-cta"
+                onclick="TeslaAI.trackCTA('Model 3','demo')">Demo Drive</button>
+      </div>
+    </div>
+    <div class="scroll-indicator" aria-hidden="true"><div class="scroll-arrow"></div></div>
+  </section>
+
+  <!-- ── MODEL S ─────────────────────────────────────────────────────────── -->
+  <section class="model-section" id="section-model-s" data-model="model-s" data-price="74990">
+    <div class="model-bg"></div>
+    <img class="model-vehicle-img"
+         src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20220303-Model-S-Social.png"
+         onerror="this.style.display='none'"
+         alt="Tesla Model S" loading="lazy" />
+    <div class="model-content">
+      <div class="personalized-badge" id="badge-model-s" style="display:none">Recommended for You</div>
+      <h2 class="model-name-label" data-ai="headline">Model S</h2>
+      <p class="model-tagline" data-ai="tagline">Relentless Performance</p>
+      <p class="model-price" data-ai="price">Starting at $74,990</p>
+      <div class="model-ctas">
+        <button class="cta-btn cta-primary" data-ai="primary-cta"
+                onclick="TeslaAI.trackCTA('Model S','order')">Order Now</button>
+        <button class="cta-btn cta-secondary" data-ai="secondary-cta"
+                onclick="TeslaAI.trackCTA('Model S','demo')">Demo Drive</button>
+      </div>
+    </div>
+    <div class="scroll-indicator" aria-hidden="true"><div class="scroll-arrow"></div></div>
+  </section>
+
+  <!-- ── MODEL X ─────────────────────────────────────────────────────────── -->
+  <section class="model-section" id="section-model-x" data-model="model-x" data-price="79990">
+    <div class="model-bg"></div>
+    <img class="model-vehicle-img"
+         src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20220303-Model-X-Social.png"
+         onerror="this.style.display='none'"
+         alt="Tesla Model X" loading="lazy" />
+    <div class="model-content">
+      <div class="personalized-badge" id="badge-model-x" style="display:none">Recommended for You</div>
+      <h2 class="model-name-label" data-ai="headline">Model X</h2>
+      <p class="model-tagline" data-ai="tagline">Maximum Versatility</p>
+      <p class="model-price" data-ai="price">Starting at $79,990</p>
+      <div class="model-ctas">
+        <button class="cta-btn cta-primary" data-ai="primary-cta"
+                onclick="TeslaAI.trackCTA('Model X','order')">Order Now</button>
+        <button class="cta-btn cta-secondary" data-ai="secondary-cta"
+                onclick="TeslaAI.trackCTA('Model X','demo')">Demo Drive</button>
+      </div>
+    </div>
+    <div class="scroll-indicator" aria-hidden="true"><div class="scroll-arrow"></div></div>
+  </section>
+
+  <!-- ── CYBERTRUCK ──────────────────────────────────────────────────────── -->
+  <section class="model-section" id="section-cybertruck" data-model="cybertruck" data-price="60990">
+    <div class="model-bg"></div>
+    <img class="model-vehicle-img"
+         src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20231120-Cybertruck-Social.png"
+         onerror="this.style.display='none'"
+         alt="Tesla Cybertruck" loading="lazy" />
+    <div class="model-content">
+      <div class="personalized-badge" id="badge-cybertruck" style="display:none">Recommended for You</div>
+      <h2 class="model-name-label" data-ai="headline">Cybertruck</h2>
+      <p class="model-tagline" data-ai="tagline">Built for the World Outside</p>
+      <p class="model-price" data-ai="price">Starting at $60,990</p>
+      <div class="model-ctas">
+        <button class="cta-btn cta-primary" data-ai="primary-cta"
+                onclick="TeslaAI.trackCTA('Cybertruck','order')">Order Now</button>
+        <button class="cta-btn cta-secondary" data-ai="secondary-cta"
+                onclick="TeslaAI.trackCTA('Cybertruck','demo')">Demo Drive</button>
+      </div>
+    </div>
+    <div class="scroll-indicator" aria-hidden="true"><div class="scroll-arrow"></div></div>
+  </section>
+
+  <!-- ── AI-personalised benefits strip (injected between sections) ──────── -->
+  <div id="benefits-strip" role="complementary" aria-label="Personalised benefits"></div>
+
+  <!-- ── SOLAR + POWERWALL ───────────────────────────────────────────────── -->
+  <section id="section-solar" class="model-section" data-model="solar">
+    <div class="solar-grid-bg" aria-hidden="true"></div>
+    <div class="model-content">
+      <h2 class="model-name-label">Solar &amp; Powerwall</h2>
+      <p class="model-tagline">Power Your Home, Your Car, Your Life</p>
+      <p class="model-price">Solar Panels from $8,500 · Powerwall from $9,200</p>
+      <div class="model-ctas">
+        <button class="cta-btn cta-primary" onclick="TeslaAI.trackCTA('Solar','learn')">Learn More</button>
+        <button class="cta-btn cta-secondary" onclick="TeslaAI.trackCTA('Solar','quote')">Get a Quote</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════════════════════════════════ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Tesla</h4>
+      <a href="#">About Tesla</a>
+      <a href="#">Careers</a>
+      <a href="#">Investor Relations</a>
+      <a href="#">Get Updates</a>
+    </div>
+    <div class="footer-col">
+      <h4>Vehicles</h4>
+      <a href="#">Model S</a>
+      <a href="#">Model 3</a>
+      <a href="#">Model X</a>
+      <a href="#">Model Y</a>
+      <a href="#">Cybertruck</a>
+    </div>
+    <div class="footer-col">
+      <h4>Energy</h4>
+      <a href="#">Solar Panels</a>
+      <a href="#">Solar Roof</a>
+      <a href="#">Powerwall</a>
+      <a href="#">Megapack</a>
+    </div>
+    <div class="footer-col">
+      <h4>Charging</h4>
+      <a href="#">Supercharger</a>
+      <a href="#">Home Charging</a>
+      <a href="#">Charging Calculator</a>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <a href="#">Find Us</a>
+      <a href="#">Customer Support</a>
+      <a href="#">Schedule Service</a>
+      <a href="#">Owner's Manual</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>Tesla © 2025. All rights reserved.</span>
+    <div>
+      <a href="#">Privacy &amp; Legal</a> ·
+      <a href="#">Vehicle Recalls</a> ·
+      <a href="#">Contact</a> ·
+      <a href="#" onclick="TeslaAI.showDebug()">⚙ AI Debug</a>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     DEBUG PANEL — Activate via ?debug=1 or clicking "AI Debug" in footer
+     ═══════════════════════════════════════════════════════════════════════ -->
+<div id="debug-panel" role="complementary" aria-label="AI Persona Debug">
+  <div class="debug-header">
+    <span>⚡ AI Persona Engine</span>
+    <span class="debug-close" onclick="TeslaAI.hideDebug()" title="Close">✕</span>
+  </div>
+  <div class="debug-body" id="debug-body">
+    <p style="color:rgba(255,255,255,0.4)">Loading persona data…</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     SCRIPTS — loaded in dependency order
+     ═══════════════════════════════════════════════════════════════════════ -->
+<script src="/js/CookieAnalyzer.js"></script>
+<script src="/js/PersonaCreator.js"></script>
+<script src="/js/ABTesting.js"></script>
+<script src="/js/ContentEngine.js"></script>
+<script src="/js/main.js"></script>
+
+</body>
+</html>
