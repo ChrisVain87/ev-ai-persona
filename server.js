@@ -128,6 +128,27 @@ app.post('/api/variant', (req, res) => {
   res.json({ variant });
 });
 
+// ─── API: Book a test drive ───────────────────────────────────────────────────
+app.post('/api/test-drive', (req, res) => {
+  const { firstName, lastName, email, model, date, location, phone, trim, time, interests, sessionId } = req.body;
+  if (!firstName || !email || !model || !date || !location) {
+    return res.status(400).json({ error: 'Required fields missing: firstName, email, model, date, location' });
+  }
+
+  const booking = { firstName, lastName, email, phone, model, trim, date, time, location, interests, sessionId, ts: Date.now() };
+  analytics.testDriveBookings = analytics.testDriveBookings || [];
+  analytics.testDriveBookings.push(booking);
+
+  // Track as conversion event
+  if (sessionId && analytics.sessions[sessionId]) {
+    analytics.sessions[sessionId].events.push({ event: 'test_drive_booked', model, ts: Date.now() });
+  }
+  analytics.conversionFunnel['test_drive_booked'] = (analytics.conversionFunnel['test_drive_booked'] || 0) + 1;
+
+  console.log(`[TEST DRIVE] Booked: ${firstName} ${lastName} <${email}> — ${model} ${trim || ''} on ${date} in ${location}`);
+  res.json({ success: true, message: 'Test drive confirmed' });
+});
+
 // ─── Catch-all → index.html ───────────────────────────────────────────────────
 app.get('*', (_, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
@@ -149,7 +170,8 @@ function buildPrompt(persona) {
   const {
     wealthScore = 50, familyScore = 50, perfScore = 50,
     ecoScore = 50, techScore = 50, intentScore = 50,
-    segment = 'General', userChoices = [], competitors = {}
+    segment = 'General', userChoices = [], competitors = {},
+    isFirstVisit = false, history = {}
   } = persona;
 
   // Build competitor context if detected
@@ -188,55 +210,71 @@ USER PERSONA:
 • Eco:          ${ecoScore}/100
 • Tech:         ${techScore}/100
 • Intent:       ${intentScore}/100
-• User choices: ${userChoices.length > 0 ? userChoices.join(', ') : 'none stated'}
-• Competitors:  ${competitorBrands.length > 0 ? competitorBrands.join(', ') : 'none detected'}
+• User choices:     ${userChoices.length > 0 ? userChoices.join(', ') : 'none stated'}
+• Competitors:      ${competitorBrands.length > 0 ? competitorBrands.join(', ') : 'none detected'}
+• First visit:      ${isFirstVisit ? 'YES — new to Tesla, may need education' : 'No — returning visitor'}
+• Visit count:      ${history.visitCount || 1}
+• Cart abandoned:   ${history.cartAbandoned ? 'YES — high intent' : 'No'}
+• Configured model: ${history.configuredModel || 'none'}
 ${competitorCtx}${choicesCtx}
 
 TESLA MODEL USPs — use ONLY the relevant ones for this persona's top scores:
-• Model 3 Long Range  – $42,990  – 358mi range, 0-60 in 4.2s, 15" cinematic glass, FSD-capable, lowest total cost EV
-• Model 3 Performance – $50,990  – 0-60 in 3.1s, dual motor AWD, track-ready, 315mi range, sport suspension
-• Model Y Long Range  – $47,990  – America's best-seller, 5-star NHTSA all categories, 7-seat option, 330mi range, 68 cu ft cargo
-• Model Y Performance – $52,990  – 0-60 in 3.5s, family SUV faster than sports cars, 5-star crash rating everywhere
-• Model S             – $74,990  – 405mi (world's longest EV range), 0-60 in 3.1s, 17" portrait display, executive lounge
-• Model S Plaid       – $89,990  – 0-60 in 1.99s (fastest production sedan ever), 1,020hp, tri-motor, plaid seats
-• Model X             – $79,990  – Falcon wing doors, 7 seats, 351mi range, lowest drag coefficient SUV on earth
-• Model X Plaid       – $94,990  – 1,020hp family rocket, falcon doors, 0-60 in 2.5s, theatre-grade rear screens
-• Cybertruck RWD      – $60,990  – Ultra-hard stainless exoskeleton, 11,000 lb tow, 250mi range, built-in generator
-• Cybertruck AWD      – $79,990  – 547mi range, 11,000 lb tow, air suspension, camp mode, go-anywhere 4WD
+MODEL Y TRIMS (family SUV, America's best-seller, 5-star NHTSA all categories, 68 cu ft cargo):
+• Model Y Standard           – $40,990 – 260mi range, 0-60 in 5.5s, RWD, 5 seats, FSD-capable
+• Model Y Standard LR        – $44,990 – 330mi range, 0-60 in 4.8s, RWD, 5 seats (7-seat option +$3K)
+• Model Y Premium LR         – $47,990 – 330mi range, 0-60 in 4.5s, AWD, premium audio, heated rear seats
+• Model Y Premium AWD        – $51,990 – 330mi range, 0-60 in 4.2s, AWD, all-weather capability, sport brakes
+• Model Y Premium Performance– $54,990 – 315mi range, 0-60 in 3.5s, AWD, sport suspension, lowered 1.5", Alcantara
+
+MODEL 3 TRIMS (sports sedan, longest EV range in class, 15" cinematic display):
+• Model 3 Standard           – $38,990 – 272mi range, 0-60 in 5.8s, RWD, 5 seats, FSD-capable
+• Model 3 Standard LR        – $42,990 – 358mi range, 0-60 in 4.2s, RWD, lowest cost-per-mile EV
+• Model 3 Premium LR         – $46,990 – 358mi range, 0-60 in 4.0s, AWD, premium interior, heated rear seats
+• Model 3 Premium AWD        – $50,990 – 315mi range, 0-60 in 3.7s, AWD, sport suspension
+• Model 3 Premium Performance– $54,990 – 315mi range, 0-60 in 3.1s, AWD, track mode, sport brakes, Alcantara
+
+FSD (Full Self-Driving, Supervised): $8,000 purchase or $99/month subscription — available on all trims
+All trims qualify for $7,500 federal clean vehicle tax credit (applied at point of sale)
 
 CONTENT RULES:
-1. Choose ONE hero model — absolute best fit considering scores AND stated choices.
-2. Every headline must feel written ONLY for this person (segment: ${segment}).
-3. Wealth >70 → language: "crafted", "exclusive", "pinnacle", "bespoke" — no price talk.
-4. Family >65 → concrete proof: "5-star NHTSA every category", "3 car seats fit flat-floor", "16 cameras protect your family".
-5. Performance >65 → hard numbers: exact 0-60 time, hp figure, "quarter-mile in X.Xs".
-6. Eco >65 → impact data: "$18,000 fuel saved over 5 years", "eliminate 5 tons CO₂/year", "charge on your own solar".
-7. Tech >65 → features: "OTA updates ship monthly", "FSD v13 Autopilot", "15\" cinematic glass display".
-8. Intent >70 → urgency: "$7,500 federal tax credit expires soon", "Q2 delivery slots filling".
-9. If competitor brands detected → include ONE specific comparison advantage in the subheadline.
-10. ctaVariantB = ultra-personalised CTA matching their top need (e.g. "Start My Family Build", "Configure My Plaid").
-11. sectionOrder MUST list all 5 models; hero model FIRST.
+1. Choose ONE hero model — "Model Y" or "Model 3" only. Best fit considering all scores AND stated choices.
+2. Choose the best trim for this persona from the 5 trim levels (Standard / Standard LR / Premium LR / Premium AWD / Premium Performance).
+3. Every headline must feel written ONLY for this person (segment: ${segment}).
+4. Wealth >70 → language: "crafted", "exclusive", "pinnacle" — no price talk.
+5. Family >65 → concrete proof: "5-star NHTSA every category", "3 car seats fit flat-floor", "7-seat option".
+6. Performance >65 → hard numbers: exact 0-60 time (e.g. "3.1 seconds"), AWD advantage.
+7. Eco >65 → impact: "$18,000 fuel saved over 5 years", "charge at home for $30/month".
+8. Tech >65 → FSD, OTA updates, "15-inch cinematic display", "144 TOPS neural processing".
+9. Intent >70 → urgency: "$7,500 tax credit — apply it instantly", "delivery slots limited".
+10. Competitor detected → include ONE specific comparison advantage in the subheadline.
+11. showEducationSection: true if no prior visits (isFirstVisit) or eco/value score high (first-time EV buyers).
+12. promoteFSD: true if techScore >65 OR perfScore >65.
+13. featuredSalesProgram: "tradein" if returning visitor, "financing" if value/eco dominant, "taxcredit" if high intent or first visit.
+14. ctaVariantB = ultra-personalised CTA matching their top need (e.g. "Start My Family Build", "Configure Performance").
+15. sectionOrder MUST be exactly ["Model Y","Model 3"] — hero model first.
 
 Return ONLY a JSON object — no markdown, no explanation:
 {
   "heroModel":             "Model Y",
-  "heroTrim":              "Long Range",
+  "heroTrim":              "Standard Long Range",
   "heroHeadline":          "string (≤40 chars)",
   "heroSubheadline":       "string (≤110 chars)",
   "heroPrimaryCTA":        "string (≤22 chars)",
   "heroSecondaryCTA":      "string (≤22 chars)",
   "urgencyMessage":        "string or null",
   "personalizedBenefits":  ["string","string","string"],
-  "priceEmphasis":         "monthly|total|savings",
-  "sectionOrder":          ["Model Y","Model 3","Model S","Model X","Cybertruck"],
+  "showEducationSection":  false,
+  "educationFocus":        "charging|savings|safety|null",
+  "promoteFSD":            false,
+  "fsdReason":             "string or null",
+  "featuredSalesProgram":  "tradein|financing|taxcredit|null",
+  "salesProgramReason":    "string or null",
+  "sectionOrder":          ["Model Y","Model 3"],
   "ctaVariantA":           "Order Now",
   "ctaVariantB":           "string (≤22 chars, ultra-personalised)",
   "sections": {
-    "Model Y":    { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
-    "Model 3":    { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
-    "Model S":    { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
-    "Model X":    { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" },
-    "Cybertruck": { "headline":"string", "tagline":"string", "primaryCTA":"string", "secondaryCTA":"string" }
+    "Model Y": { "headline":"string", "tagline":"string", "recommendedTrim":"string", "primaryCTA":"string", "secondaryCTA":"string" },
+    "Model 3": { "headline":"string", "tagline":"string", "recommendedTrim":"string", "primaryCTA":"string", "secondaryCTA":"string" }
   },
   "personalisationReason": "string (1-2 sentences, internal rationale)"
 }`;
@@ -270,33 +308,38 @@ function enrichPersona(persona, req) {
 
 // ─── Fallback content (when AI is unavailable) ────────────────────────────────
 function getDefaultContent(persona) {
-  // Simple rule-based fallback
-  const { wealthScore = 50, familyScore = 50, perfScore = 50 } = persona;
+  const { wealthScore = 50, familyScore = 50, perfScore = 50, ecoScore = 50, techScore = 50, isFirstVisit = false, history = {} } = persona;
   let heroModel = 'Model Y';
-  let heroTrim  = 'Long Range';
+  let heroTrim  = 'Standard Long Range';
 
-  if (wealthScore > 75 && perfScore > 60) { heroModel = 'Model S'; heroTrim = 'Plaid'; }
-  else if (familyScore > 65 && wealthScore > 60) { heroModel = 'Model X'; heroTrim = 'Long Range'; }
-  else if (perfScore > 70) { heroModel = 'Model 3'; heroTrim = 'Performance'; }
+  if (perfScore > 70)                         { heroModel = 'Model 3'; heroTrim = 'Premium Performance'; }
+  else if (familyScore > 65 && wealthScore > 60) { heroModel = 'Model Y'; heroTrim = 'Premium Long Range'; }
+  else if (familyScore > 65)                  { heroModel = 'Model Y'; heroTrim = 'Standard Long Range'; }
+  else if (wealthScore > 65)                  { heroModel = 'Model Y'; heroTrim = 'Premium Long Range'; }
+  else if (ecoScore > 65 || techScore > 65)   { heroModel = 'Model 3'; heroTrim = 'Standard Long Range'; }
+
+  const sectionOrder = heroModel === 'Model 3' ? ['Model 3', 'Model Y'] : ['Model Y', 'Model 3'];
 
   return {
     heroModel, heroTrim,
-    heroHeadline:    'Drive the Future',
-    heroSubheadline: 'Experience the safest, fastest, most capable electric vehicle ever built.',
-    heroPrimaryCTA:  'Order Now',
-    heroSecondaryCTA:'Demo Drive',
-    urgencyMessage:  null,
-    personalizedBenefits: ['Zero emissions', 'Autopilot included', '$7,500 federal tax credit'],
-    priceEmphasis:   'monthly',
-    sectionOrder:    [heroModel, 'Model Y', 'Model 3', 'Model S', 'Model X', 'Cybertruck'].filter((v, i, a) => a.indexOf(v) === i),
-    ctaVariantA:     'Order Now',
-    ctaVariantB:     'Build Your Tesla',
+    heroHeadline:         'Drive Electric. Live Better.',
+    heroSubheadline:      'Join 2 million+ Tesla owners. Model Y or Model 3 — see which fits your life.',
+    heroPrimaryCTA:       'Build Your Tesla',
+    heroSecondaryCTA:     'Book a Test Drive',
+    urgencyMessage:       null,
+    personalizedBenefits: ['$7,500 federal tax credit applied at purchase', 'Autopilot included on every Tesla', '330mi range — charge at home overnight'],
+    showEducationSection: isFirstVisit || false,
+    educationFocus:       isFirstVisit ? 'savings' : null,
+    promoteFSD:           techScore > 65 || perfScore > 65,
+    fsdReason:            null,
+    featuredSalesProgram: history.isReturning ? 'tradein' : 'taxcredit',
+    salesProgramReason:   null,
+    sectionOrder,
+    ctaVariantA:          'Order Now',
+    ctaVariantB:          'Build Your Tesla',
     sections: {
-      'Model Y':    { headline:'Model Y', tagline:'For Every Adventure', primaryCTA:'Order Now', secondaryCTA:'Demo Drive' },
-      'Model 3':    { headline:'Model 3', tagline:'The Future of Driving', primaryCTA:'Order Now', secondaryCTA:'Demo Drive' },
-      'Model S':    { headline:'Model S', tagline:'Relentless Performance', primaryCTA:'Order Now', secondaryCTA:'Demo Drive' },
-      'Model X':    { headline:'Model X', tagline:'Maximum Versatility', primaryCTA:'Order Now', secondaryCTA:'Demo Drive' },
-      'Cybertruck': { headline:'Cybertruck', tagline:'Built for the World Outside', primaryCTA:'Order Now', secondaryCTA:'Demo Drive' }
+      'Model Y': { headline: 'Model Y', tagline: 'America\'s Best-Selling Electric SUV', recommendedTrim: heroModel === 'Model Y' ? heroTrim : 'Standard Long Range', primaryCTA: 'Order Now', secondaryCTA: 'Book Test Drive' },
+      'Model 3': { headline: 'Model 3', tagline: '358 Miles. Zero Compromises.',           recommendedTrim: heroModel === 'Model 3' ? heroTrim : 'Standard Long Range', primaryCTA: 'Order Now', secondaryCTA: 'Book Test Drive' }
     },
     personalisationReason: 'Fallback content — AI unavailable'
   };

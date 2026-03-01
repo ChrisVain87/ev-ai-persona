@@ -3,73 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tesla | Electric Cars, Solar & Clean Energy</title>
-
-  <!-- SEO -->
-  <meta name="description" content="Tesla builds electric vehicles, solar panels and energy storage. Discover Model S, 3, X, Y, Cybertruck and solar energy products.">
-  <meta property="og:title" content="Tesla">
-  <meta property="og:description" content="Experience the electric future. Personalised for you.">
-
-  <!-- Inter font — closest free alternative to Tesla's proprietary TeslaFont -->
+  <title>Tesla | Model Y &amp; Model 3 — Electric Cars for Everyone</title>
+  <meta name="description" content="Drive electric with Model Y or Model 3. Personalised recommendations, 5-star safety, 330mi range, and $7,500 tax credit available.">
+  <meta property="og:title" content="Tesla | Find Your Perfect Electric Car">
+  <meta property="og:description" content="Get matched to your ideal Tesla — Model Y or Model 3 — with AI-powered personalisation.">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-
-  <!-- Primary stylesheet -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/tesla.css" />
-
-  <!--
-    EXTERNAL TESLA ASSETS — Referenced directly from Tesla CDN.
-    The browser loads these without re-writing or redistributing them.
-    If Tesla's CORS policy blocks stylesheet access, our local tesla.css
-    provides an identical faithful recreation.
-  -->
-  <!--
-  <link rel="stylesheet" href="https://www.tesla.com/themes/custom/tesla_theme/css/tesla.min.css" crossorigin="anonymous" />
-  -->
 </head>
 <body>
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     LOADING SCREEN — shown during persona analysis + AI content generation
+     LOADING BAR — slim progress bar at top of page
      ═══════════════════════════════════════════════════════════════════════ -->
-<div id="loading-screen" class="active" aria-label="Loading personalised experience" role="progressbar">
-  <div class="loading-wordmark" aria-hidden="true">TESLA</div>
-  <div class="loading-progress-track" aria-hidden="true">
-    <div class="loading-progress-bar"></div>
-  </div>
-  <p id="loading-status">Initialising…</p>
+<div id="loading-screen" class="loading-bar-wrap active" role="progressbar" aria-label="Loading">
+  <div id="loading-bar" class="loading-bar"></div>
+  <div id="loading-status" class="loading-status">Personalising your experience…</div>
 </div>
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     URGENCY BANNER — AI-injected when high-intent signals detected
+     URGENCY BANNER
      ═══════════════════════════════════════════════════════════════════════ -->
 <div id="urgency-banner" role="alert" aria-live="polite"></div>
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     NAVIGATION
+     NAVIGATION — white sticky
      ═══════════════════════════════════════════════════════════════════════ -->
 <nav id="nav" role="navigation" aria-label="Main navigation">
-  <!-- Logo -->
   <a href="/" class="nav-logo" aria-label="Tesla home">
-    <!-- Inline SVG Tesla T-logo path (public trademark mark used for identification) -->
     <svg class="nav-logo-svg" viewBox="0 0 342 35" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <path d="M0 .1a9.7 9.7 0 0 0 7 7h11l.5.1v27.6h6.8V7.3L26 7h11a9.8 9.8 0 0 0 7-7H0zm238.6 0h-6.8v34.8H263a9.7 9.7 0 0 0 6-6.8h-30.3V0zm-52.3 6.8c3.6-1 6.6-3.8 7.4-6.9l-38.1.1v11.8h31.4v7.2h-24.4a13 13 0 0 0-13 13v8h44.3a9.7 9.7 0 0 0 7-6.8H163V28h24.3zm116.2 28h6.7V14.5a14 14 0 0 0-14-14.4h-23.4a14 14 0 0 0-14.1 14.4V35h6.8V21.3h38zm0-19.5h-38v-7.3a7.2 7.2 0 0 1 7.3-7.3h23.4a7.2 7.2 0 0 1 7.3 7.3zm-186.5 19.5h6.7V14.5a14 14 0 0 0-14-14.4H85.4a14 14 0 0 0-14 14.4V35h6.7V21.3h37.9zm0-19.5H78v-7.3a7.2 7.2 0 0 1 7.4-7.3h23.4a7.2 7.2 0 0 1 7.3 7.3z" fill="currentColor"/>
     </svg>
   </a>
 
-  <!-- Center nav links -->
   <ul class="nav-links" role="list">
-    <li><a href="#">Vehicles</a></li>
-    <li><a href="#">Energy</a></li>
-    <li><a href="#">Charging</a></li>
-    <li><a href="#">Discover</a></li>
-    <li><a href="#">Shop</a></li>
+    <li><a href="#section-model-y">Model Y</a></li>
+    <li><a href="#section-model-3">Model 3</a></li>
+    <li><a href="#section-fsd">Full Self-Driving</a></li>
+    <li><a href="#section-sales">Financing</a></li>
   </ul>
 
-  <!-- Right actions -->
   <div class="nav-actions">
     <button class="nav-btn nav-btn-ghost" onclick="TeslaAI.showTestDrive()">Test Drive</button>
     <button id="nav-order-cta" class="nav-btn nav-btn-solid" onclick="TeslaAI.trackNavOrder()">Order Now</button>
@@ -79,142 +55,511 @@
   </div>
 </nav>
 
+<div class="nav-mobile-menu" id="nav-mobile-menu" aria-hidden="true">
+  <a href="#section-model-y" onclick="TeslaAI.toggleMobileMenu()">Model Y</a>
+  <a href="#section-model-3" onclick="TeslaAI.toggleMobileMenu()">Model 3</a>
+  <a href="#section-fsd" onclick="TeslaAI.toggleMobileMenu()">Full Self-Driving</a>
+  <a href="#section-sales" onclick="TeslaAI.toggleMobileMenu()">Financing</a>
+  <a href="#" onclick="TeslaAI.showTestDrive(); TeslaAI.toggleMobileMenu();" class="mobile-cta">Book Test Drive</a>
+</div>
+
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     MODEL SECTIONS — AI reorders these based on persona recommendation
-     Each section is 100vh and self-contained.
-     data-model → slug used for CSS theming + JS ordering
-     data-price → base price used for price-emphasis swapping
+     MAIN CONTENT
      ═══════════════════════════════════════════════════════════════════════ -->
-<main id="models-container" role="main">
+<main id="main-content" role="main">
 
-  <!-- ── MODEL Y ─────────────────────────────────────────────────────────── -->
-  <section class="model-section" id="section-model-y" data-model="model-y" data-price="47990">
-    <div class="model-bg"></div>
+  <!-- ── §1 HERO ─────────────────────────────────────────────────────────── -->
+  <section id="section-hero" class="hero-section">
+    <div class="hero-content">
+      <div class="hero-badge" id="hero-personalized-badge"></div>
+      <h1 class="hero-headline" data-ai="hero-headline">Drive Electric. Live Better.</h1>
+      <p class="hero-subheadline" data-ai="hero-subheadline">Join 2 million+ Tesla owners. See which model fits your life — Model Y or Model 3.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" id="hero-primary-cta" data-ai="hero-primary-cta" onclick="TeslaAI.trackCTA('hero','order')">Build Your Tesla</button>
+        <button class="btn-secondary" id="hero-secondary-cta" data-ai="hero-secondary-cta" onclick="TeslaAI.showTestDrive()">Book a Test Drive</button>
+      </div>
+      <div class="hero-trust-bar" role="list" aria-label="Trust signals">
+        <span role="listitem">★★★★★ 5-Star NHTSA Safety</span>
+        <span role="listitem">#1 Selling EV in America</span>
+        <span role="listitem">$7,500 Tax Credit</span>
+        <span role="listitem">30-Day Return Policy</span>
+      </div>
+    </div>
+    <div class="hero-image-wrap">
+      <img id="hero-model-img"
+           src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20220303-Model-Y-Social.png"
+           onerror="this.style.opacity='0'"
+           alt="Tesla Model Y" />
+    </div>
+  </section>
 
-    <!-- Vehicle illustration (CSS/SVG — swap for real image) -->
-    <img class="model-vehicle-img"
-         src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20220303-Model-Y-Social.png"
-         onerror="this.style.display='none'"
-         alt="Tesla Model Y" loading="lazy" />
 
-    <div class="model-content">
+  <!-- ── §2 NEEDS / PRIORITY TILES (first-visit inline, non-blocking) ────── -->
+  <section id="section-needs" class="needs-section" style="display:none" aria-label="Personalise your experience">
+    <div class="needs-inner">
+      <h2>What matters most to you?</h2>
+      <p>Select <strong>3 priorities</strong> to personalise your Tesla recommendation</p>
+      <div class="needs-grid">
+        <button class="need-tile" data-choice="performance" type="button" aria-pressed="false">
+          <span class="need-icon" aria-hidden="true">⚡</span>
+          <strong>Performance</strong>
+          <span>0–60 in seconds</span>
+        </button>
+        <button class="need-tile" data-choice="family" type="button" aria-pressed="false">
+          <span class="need-icon" aria-hidden="true">👨‍👩‍👧</span>
+          <strong>Family &amp; Safety</strong>
+          <span>5-star safety, space for everyone</span>
+        </button>
+        <button class="need-tile" data-choice="eco" type="button" aria-pressed="false">
+          <span class="need-icon" aria-hidden="true">🌿</span>
+          <strong>Eco &amp; Sustainability</strong>
+          <span>Zero emissions, lower costs</span>
+        </button>
+        <button class="need-tile" data-choice="luxury" type="button" aria-pressed="false">
+          <span class="need-icon" aria-hidden="true">💎</span>
+          <strong>Luxury &amp; Comfort</strong>
+          <span>Premium experience</span>
+        </button>
+        <button class="need-tile" data-choice="tech" type="button" aria-pressed="false">
+          <span class="need-icon" aria-hidden="true">🤖</span>
+          <strong>Tech &amp; Autopilot</strong>
+          <span>FSD, OTA updates, AI</span>
+        </button>
+        <button class="need-tile" data-choice="value" type="button" aria-pressed="false">
+          <span class="need-icon" aria-hidden="true">💰</span>
+          <strong>Best Value</strong>
+          <span>Tax credits, fuel savings</span>
+        </button>
+      </div>
+      <div class="needs-footer">
+        <span id="needs-count" aria-live="polite">0 of 3 selected</span>
+        <button id="needs-submit" class="btn-primary" disabled type="button" onclick="TeslaAI.submitNeeds()">
+          See My Tesla &rarr;
+        </button>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── §3 EDUCATION (first-visit EV basics, hidden by default) ─────────── -->
+  <section id="section-education" class="education-section" style="display:none" aria-label="New to electric vehicles">
+    <div class="section-inner">
+      <div class="section-label">New to electric?</div>
+      <h2>Everything You Need to Know</h2>
+      <p class="section-subtitle">Simple answers to the questions every new EV buyer asks.</p>
+      <div class="edu-grid">
+        <div class="edu-card">
+          <div class="edu-icon" aria-hidden="true">🔌</div>
+          <h3>Charging is easy</h3>
+          <p>Plug in at home overnight — just like your phone. Or use Tesla's 60,000+ Supercharger stalls for fast top-ups on the road.</p>
+        </div>
+        <div class="edu-card">
+          <div class="edu-icon" aria-hidden="true">📍</div>
+          <h3>Range that fits your life</h3>
+          <p>Model Y goes up to 330 miles per charge. The average American drives 37 miles a day — most owners charge just once a week.</p>
+        </div>
+        <div class="edu-card">
+          <div class="edu-icon" aria-hidden="true">🔧</div>
+          <h3>Almost zero maintenance</h3>
+          <p>No oil changes, no transmission fluid, no exhaust system. Electric motors have fewer moving parts — and Tesla's data shows fewer repairs.</p>
+        </div>
+        <div class="edu-card">
+          <div class="edu-icon" aria-hidden="true">💸</div>
+          <h3>You save every month</h3>
+          <p>Electricity costs about 70% less than petrol per mile. Add the $7,500 federal tax credit, and most owners save $6,000+ in year one.</p>
+        </div>
+      </div>
+      <div class="savings-calc">
+        <p class="savings-label">How much could you save?</p>
+        <div class="savings-row">
+          <label for="fuel-spend">Monthly fuel spend: $</label>
+          <input id="fuel-spend" type="number" value="200" min="0" max="1000" step="10" aria-label="Monthly fuel spend in dollars" />
+        </div>
+        <div class="savings-result" id="savings-result">
+          You could save <strong>$1,680/year</strong> switching to a Tesla.
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── §4 MODEL COMPARISON ──────────────────────────────────────────────── -->
+  <section id="section-compare" class="compare-section" aria-label="Compare Tesla models">
+    <div class="section-inner">
+      <div class="section-label">Which Tesla?</div>
+      <h2>Find Your Perfect Match</h2>
+      <div class="compare-tabs" role="tablist" aria-label="Filter by need">
+        <button class="ctab active" data-tab="family" role="tab" aria-selected="true" onclick="TeslaAI.switchCompareTab('family')">Family</button>
+        <button class="ctab" data-tab="performance" role="tab" aria-selected="false" onclick="TeslaAI.switchCompareTab('performance')">Performance</button>
+        <button class="ctab" data-tab="value" role="tab" aria-selected="false" onclick="TeslaAI.switchCompareTab('value')">Best Value</button>
+        <button class="ctab" data-tab="eco" role="tab" aria-selected="false" onclick="TeslaAI.switchCompareTab('eco')">Eco</button>
+      </div>
+      <div class="compare-cards">
+        <div class="compare-card" id="compare-model-y" data-model="model-y">
+          <div class="compare-recommended" id="compare-y-badge" style="display:none">Recommended for You</div>
+          <img src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20220303-Model-Y-Social.png"
+               onerror="this.style.display='none'" alt="Tesla Model Y" loading="lazy" />
+          <div class="compare-info">
+            <h3>Model Y</h3>
+            <p class="compare-trim" id="compare-y-trim">Standard Long Range</p>
+            <div class="compare-stats" data-tab-content="family">
+              <div class="cstat"><span class="cstat-val">330</span><span class="cstat-label">mi range</span></div>
+              <div class="cstat"><span class="cstat-val">5–7</span><span class="cstat-label">seats</span></div>
+              <div class="cstat"><span class="cstat-val">5★</span><span class="cstat-label">NHTSA</span></div>
+            </div>
+            <p class="compare-desc" id="compare-y-desc">The most space, 7-seat option, and top safety ratings. Perfect for school runs and family road trips.</p>
+            <div class="compare-price" id="compare-y-price">From $44,990 <span>($37,490 after credit)</span></div>
+            <div class="compare-ctas">
+              <button class="btn-primary" onclick="document.getElementById('section-model-y').scrollIntoView({behavior:'smooth'})">Explore Model Y</button>
+              <button class="btn-text" onclick="TeslaAI.showTestDrive('Model Y')">Test Drive</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="compare-card" id="compare-model-3" data-model="model-3">
+          <div class="compare-recommended" id="compare-3-badge" style="display:none">Recommended for You</div>
+          <img src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20240320-Model-3-Social.png"
+               onerror="this.style.display='none'" alt="Tesla Model 3" loading="lazy" />
+          <div class="compare-info">
+            <h3>Model 3</h3>
+            <p class="compare-trim" id="compare-3-trim">Standard Long Range</p>
+            <div class="compare-stats">
+              <div class="cstat"><span class="cstat-val">358</span><span class="cstat-label">mi range</span></div>
+              <div class="cstat"><span class="cstat-val">4.2</span><span class="cstat-label">sec 0–60</span></div>
+              <div class="cstat"><span class="cstat-val">5★</span><span class="cstat-label">NHTSA</span></div>
+            </div>
+            <p class="compare-desc" id="compare-3-desc">America's longest range sedan. Sportier, more efficient, and starting at a lower price.</p>
+            <div class="compare-price" id="compare-3-price">From $42,990 <span>($35,490 after credit)</span></div>
+            <div class="compare-ctas">
+              <button class="btn-primary" onclick="document.getElementById('section-model-3').scrollIntoView({behavior:'smooth'})">Explore Model 3</button>
+              <button class="btn-text" onclick="TeslaAI.showTestDrive('Model 3')">Test Drive</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ── §5 MODEL Y ───────────────────────────────────────────────────────── -->
+  <section id="section-model-y" class="model-detail-section" data-model="model-y" data-price="44990" aria-label="Model Y">
+    <div class="model-detail-image">
+      <img src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20220303-Model-Y-Social.png"
+           onerror="this.style.opacity='0'" alt="Tesla Model Y" loading="lazy" />
+    </div>
+    <div class="model-detail-content">
       <div class="personalized-badge" id="badge-model-y" style="display:none">Recommended for You</div>
-      <h2 class="model-name-label" data-ai="headline">Model Y</h2>
-      <p class="model-tagline" data-ai="tagline">For Every Adventure</p>
-      <p class="model-price" data-ai="price">Starting at $47,990</p>
-      <div class="model-ctas">
-        <button class="cta-btn cta-primary" data-ai="primary-cta"
-                onclick="TeslaAI.trackCTA('Model Y','order')">Order Now</button>
-        <button class="cta-btn cta-secondary" data-ai="secondary-cta"
-                onclick="TeslaAI.trackCTA('Model Y','demo')">Demo Drive</button>
+      <h2 data-ai="headline">Model Y</h2>
+      <p class="model-tagline" data-ai="tagline">America's Best-Selling Electric SUV</p>
+
+      <div class="model-usps" role="list">
+        <span role="listitem">Up to 330mi range</span>
+        <span role="listitem">5-Star NHTSA Safety</span>
+        <span role="listitem">7-Seat Option</span>
+        <span role="listitem">15" Touchscreen</span>
+        <span role="listitem">FSD Capable</span>
       </div>
+
+      <!-- Trim Selector -->
+      <div class="trim-selector" data-model="model-y" role="group" aria-label="Model Y trims">
+        <button class="trim-btn" data-trim="standard" data-price="40990" type="button">Standard</button>
+        <button class="trim-btn active" data-trim="standard-lr" data-price="44990" type="button">Standard Long Range</button>
+        <button class="trim-btn" data-trim="premium-lr" data-price="47990" type="button">Premium Long Range</button>
+        <button class="trim-btn" data-trim="premium-awd" data-price="51990" type="button">Premium AWD</button>
+        <button class="trim-btn" data-trim="premium-perf" data-price="54990" type="button">Premium Performance</button>
+      </div>
+
+      <!-- Specs -->
+      <div class="trim-specs" id="specs-model-y" aria-label="Model Y specifications">
+        <div class="spec">
+          <span class="spec-val" id="range-model-y">330</span>
+          <span class="spec-label">mi Range</span>
+        </div>
+        <div class="spec">
+          <span class="spec-val" id="accel-model-y">4.8</span>
+          <span class="spec-label">sec 0–60</span>
+        </div>
+        <div class="spec">
+          <span class="spec-val" id="drive-model-y">RWD</span>
+          <span class="spec-label">Drivetrain</span>
+        </div>
+        <div class="spec">
+          <span class="spec-val" id="seats-model-y">5</span>
+          <span class="spec-label">Seats</span>
+        </div>
+      </div>
+
+      <!-- Pricing -->
+      <div class="trim-pricing" aria-label="Model Y pricing">
+        <div class="price-total" id="price-model-y">$44,990</div>
+        <div class="price-monthly">or est. <strong id="monthly-model-y">$666</strong>/mo</div>
+        <div class="price-after-credit">$<span id="after-credit-model-y">37,490</span> after $7,500 federal tax credit</div>
+      </div>
+
+      <!-- CTAs -->
+      <div class="model-ctas">
+        <button class="btn-primary" data-ai="primary-cta" onclick="TeslaAI.trackCTA('Model Y','order')">Order Now</button>
+        <button class="btn-secondary" data-ai="secondary-cta" onclick="TeslaAI.showTestDrive('Model Y')">Book Test Drive</button>
+      </div>
+
+      <!-- Personalised benefits (AI injected) -->
+      <div class="model-benefits" id="benefits-model-y"></div>
     </div>
-    <div class="scroll-indicator" aria-hidden="true"><div class="scroll-arrow"></div></div>
   </section>
 
-  <!-- ── MODEL 3 ─────────────────────────────────────────────────────────── -->
-  <section class="model-section" id="section-model-3" data-model="model-3" data-price="42990">
-    <div class="model-bg"></div>
-    <img class="model-vehicle-img"
-         src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20240320-Model-3-Social.png"
-         onerror="this.style.display='none'"
-         alt="Tesla Model 3" loading="lazy" />
-    <div class="model-content">
+
+  <!-- ── §6 MODEL 3 ───────────────────────────────────────────────────────── -->
+  <section id="section-model-3" class="model-detail-section model-detail-alt" data-model="model-3" data-price="42990" aria-label="Model 3">
+    <div class="model-detail-image">
+      <img src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20240320-Model-3-Social.png"
+           onerror="this.style.opacity='0'" alt="Tesla Model 3" loading="lazy" />
+    </div>
+    <div class="model-detail-content">
       <div class="personalized-badge" id="badge-model-3" style="display:none">Recommended for You</div>
-      <h2 class="model-name-label" data-ai="headline">Model 3</h2>
-      <p class="model-tagline" data-ai="tagline">The Future of Driving</p>
-      <p class="model-price" data-ai="price">Starting at $42,990</p>
-      <div class="model-ctas">
-        <button class="cta-btn cta-primary" data-ai="primary-cta"
-                onclick="TeslaAI.trackCTA('Model 3','order')">Order Now</button>
-        <button class="cta-btn cta-secondary" data-ai="secondary-cta"
-                onclick="TeslaAI.trackCTA('Model 3','demo')">Demo Drive</button>
+      <h2 data-ai="headline">Model 3</h2>
+      <p class="model-tagline" data-ai="tagline">358 Miles. Zero Compromises.</p>
+
+      <div class="model-usps" role="list">
+        <span role="listitem">Up to 358mi range</span>
+        <span role="listitem">5-Star NHTSA Safety</span>
+        <span role="listitem">0–60 in 3.1s</span>
+        <span role="listitem">15" Glass Cockpit</span>
+        <span role="listitem">FSD Capable</span>
       </div>
+
+      <!-- Trim Selector -->
+      <div class="trim-selector" data-model="model-3" role="group" aria-label="Model 3 trims">
+        <button class="trim-btn" data-trim="standard" data-price="38990" type="button">Standard</button>
+        <button class="trim-btn active" data-trim="standard-lr" data-price="42990" type="button">Standard Long Range</button>
+        <button class="trim-btn" data-trim="premium-lr" data-price="46990" type="button">Premium Long Range</button>
+        <button class="trim-btn" data-trim="premium-awd" data-price="50990" type="button">Premium AWD</button>
+        <button class="trim-btn" data-trim="premium-perf" data-price="54990" type="button">Premium Performance</button>
+      </div>
+
+      <!-- Specs -->
+      <div class="trim-specs" id="specs-model-3" aria-label="Model 3 specifications">
+        <div class="spec">
+          <span class="spec-val" id="range-model-3">358</span>
+          <span class="spec-label">mi Range</span>
+        </div>
+        <div class="spec">
+          <span class="spec-val" id="accel-model-3">4.2</span>
+          <span class="spec-label">sec 0–60</span>
+        </div>
+        <div class="spec">
+          <span class="spec-val" id="drive-model-3">RWD</span>
+          <span class="spec-label">Drivetrain</span>
+        </div>
+        <div class="spec">
+          <span class="spec-val" id="seats-model-3">5</span>
+          <span class="spec-label">Seats</span>
+        </div>
+      </div>
+
+      <!-- Pricing -->
+      <div class="trim-pricing" aria-label="Model 3 pricing">
+        <div class="price-total" id="price-model-3">$42,990</div>
+        <div class="price-monthly">or est. <strong id="monthly-model-3">$633</strong>/mo</div>
+        <div class="price-after-credit">$<span id="after-credit-model-3">35,490</span> after $7,500 federal tax credit</div>
+      </div>
+
+      <!-- CTAs -->
+      <div class="model-ctas">
+        <button class="btn-primary" data-ai="primary-cta" onclick="TeslaAI.trackCTA('Model 3','order')">Order Now</button>
+        <button class="btn-secondary" data-ai="secondary-cta" onclick="TeslaAI.showTestDrive('Model 3')">Book Test Drive</button>
+      </div>
+
+      <!-- Personalised benefits (AI injected) -->
+      <div class="model-benefits" id="benefits-model-3"></div>
     </div>
-    <div class="scroll-indicator" aria-hidden="true"><div class="scroll-arrow"></div></div>
   </section>
 
-  <!-- ── MODEL S ─────────────────────────────────────────────────────────── -->
-  <section class="model-section" id="section-model-s" data-model="model-s" data-price="74990">
-    <div class="model-bg"></div>
-    <img class="model-vehicle-img"
-         src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20220303-Model-S-Social.png"
-         onerror="this.style.display='none'"
-         alt="Tesla Model S" loading="lazy" />
-    <div class="model-content">
-      <div class="personalized-badge" id="badge-model-s" style="display:none">Recommended for You</div>
-      <h2 class="model-name-label" data-ai="headline">Model S</h2>
-      <p class="model-tagline" data-ai="tagline">Relentless Performance</p>
-      <p class="model-price" data-ai="price">Starting at $74,990</p>
-      <div class="model-ctas">
-        <button class="cta-btn cta-primary" data-ai="primary-cta"
-                onclick="TeslaAI.trackCTA('Model S','order')">Order Now</button>
-        <button class="cta-btn cta-secondary" data-ai="secondary-cta"
-                onclick="TeslaAI.trackCTA('Model S','demo')">Demo Drive</button>
+  <!-- AI-personalised benefits strip (between models, injected) -->
+  <div id="benefits-strip" role="complementary" aria-label="Personalised benefits" style="display:none"></div>
+
+
+  <!-- ── §7 FULL SELF-DRIVING ─────────────────────────────────────────────── -->
+  <section id="section-fsd" class="fsd-section" aria-label="Full Self-Driving">
+    <div class="section-inner">
+      <div class="section-label" data-ai="fsd-cta">Full Self-Driving (Supervised)</div>
+      <h2>The Future of Driving. Available Today.</h2>
+      <p class="section-subtitle">FSD uses 8 cameras and neural AI to navigate city streets, highways, and parking lots — and gets smarter with every over-the-air update.</p>
+      <div class="fsd-pillars">
+        <div class="fsd-pillar">
+          <div class="fsd-pillar-icon" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h3>Safety</h3>
+          <ul>
+            <li>Automatic Emergency Braking</li>
+            <li>Forward Collision Warning</li>
+            <li>Lane Departure Prevention</li>
+            <li>360° Blind Spot Protection</li>
+            <li>10× fewer accidents vs avg driver*</li>
+          </ul>
+        </div>
+        <div class="fsd-pillar">
+          <div class="fsd-pillar-icon" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 17l2-2 4 4 10-10 2 2L9 23 3 17z"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <h3>Comfort</h3>
+          <ul>
+            <li>Traffic-Aware Cruise Control</li>
+            <li>Automatic Lane Changes</li>
+            <li>Autopark in under 60 seconds</li>
+            <li>Summon from parking spaces</li>
+            <li>Navigate on Autopilot</li>
+          </ul>
+        </div>
+        <div class="fsd-pillar">
+          <div class="fsd-pillar-icon" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <h3>Technology</h3>
+          <ul>
+            <li>8-Camera 360° Vision System</li>
+            <li>144 TOPS Neural Processing</li>
+            <li>OTA updates — improves overnight</li>
+            <li>3 billion+ FSD miles driven</li>
+            <li>Full city street navigation</li>
+          </ul>
+        </div>
+      </div>
+      <div class="fsd-pricing">
+        <p>Add to any Tesla: <strong>$99/month</strong> or <strong>$8,000</strong> one-time purchase</p>
+        <button class="btn-primary" onclick="TeslaAI.trackCTA('FSD','add')">Add FSD to Your Order</button>
+        <p class="fsd-legal">*Based on Tesla Safety Report Q3 2024. FSD requires active driver supervision.</p>
       </div>
     </div>
-    <div class="scroll-indicator" aria-hidden="true"><div class="scroll-arrow"></div></div>
   </section>
 
-  <!-- ── MODEL X ─────────────────────────────────────────────────────────── -->
-  <section class="model-section" id="section-model-x" data-model="model-x" data-price="79990">
-    <div class="model-bg"></div>
-    <img class="model-vehicle-img"
-         src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20220303-Model-X-Social.png"
-         onerror="this.style.display='none'"
-         alt="Tesla Model X" loading="lazy" />
-    <div class="model-content">
-      <div class="personalized-badge" id="badge-model-x" style="display:none">Recommended for You</div>
-      <h2 class="model-name-label" data-ai="headline">Model X</h2>
-      <p class="model-tagline" data-ai="tagline">Maximum Versatility</p>
-      <p class="model-price" data-ai="price">Starting at $79,990</p>
-      <div class="model-ctas">
-        <button class="cta-btn cta-primary" data-ai="primary-cta"
-                onclick="TeslaAI.trackCTA('Model X','order')">Order Now</button>
-        <button class="cta-btn cta-secondary" data-ai="secondary-cta"
-                onclick="TeslaAI.trackCTA('Model X','demo')">Demo Drive</button>
+
+  <!-- ── §8 SALES PROGRAMS ─────────────────────────────────────────────────── -->
+  <section id="section-sales" class="sales-section" aria-label="Sales programs">
+    <div class="section-inner">
+      <div class="section-label">Make the Switch Easier</div>
+      <h2>Savings Built In</h2>
+      <div class="sales-cards">
+
+        <!-- Trade-In -->
+        <div class="sales-card" id="card-tradein">
+          <div class="sales-card-icon" aria-hidden="true">🔄</div>
+          <h3>Trade-In Uplift</h3>
+          <p>Get competitive value for your current car — including up to $3,000 extra when you trade in for a Tesla.</p>
+          <div class="tradein-calc">
+            <div class="calc-row">
+              <select id="tradein-year" aria-label="Vehicle year">
+                <option value="2024">2024</option><option value="2023">2023</option>
+                <option value="2022">2022</option><option value="2021">2021</option>
+                <option value="2020">2020</option><option value="2019">2019</option>
+                <option value="2018">2018</option><option value="2017">2017</option>
+                <option value="2016">2016</option><option value="2015">2015</option>
+              </select>
+            </div>
+            <div class="calc-row">
+              <select id="tradein-make" aria-label="Vehicle make">
+                <option value="Toyota">Toyota</option><option value="Honda">Honda</option>
+                <option value="Ford">Ford</option><option value="Chevrolet">Chevrolet</option>
+                <option value="BMW">BMW</option><option value="Mercedes">Mercedes-Benz</option>
+                <option value="Audi">Audi</option><option value="Volkswagen">Volkswagen</option>
+                <option value="Hyundai">Hyundai</option><option value="Kia">Kia</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="calc-row">
+              <input type="text" id="tradein-model-input" placeholder="Model (e.g. Camry)" aria-label="Vehicle model" />
+            </div>
+            <button class="btn-primary btn-sm" onclick="TeslaAI.estimateTradeIn()">Get Instant Estimate</button>
+            <div id="tradein-result" class="tradein-result" style="display:none" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <!-- Financing -->
+        <div class="sales-card" id="card-financing">
+          <div class="sales-card-icon" aria-hidden="true">%</div>
+          <h3>0% Financing Available</h3>
+          <p>Qualified buyers pay no interest on 24-month terms. Calculate your exact monthly payment.</p>
+          <div class="finance-calc">
+            <div class="calc-row">
+              <label for="finance-model">Model &amp; Trim</label>
+              <select id="finance-model" aria-label="Model and trim for financing">
+                <option value="44990">Model Y — Standard Long Range ($44,990)</option>
+                <option value="47990">Model Y — Premium Long Range ($47,990)</option>
+                <option value="51990">Model Y — Premium AWD ($51,990)</option>
+                <option value="54990">Model Y — Premium Performance ($54,990)</option>
+                <option value="42990">Model 3 — Standard Long Range ($42,990)</option>
+                <option value="46990">Model 3 — Premium Long Range ($46,990)</option>
+                <option value="50990">Model 3 — Premium AWD ($50,990)</option>
+                <option value="54990">Model 3 — Premium Performance ($54,990)</option>
+              </select>
+            </div>
+            <div class="calc-row">
+              <label for="dp-slider">Down Payment: <strong>$<span id="dp-val">5,000</span></strong></label>
+              <input type="range" id="dp-slider" min="0" max="20000" value="5000" step="500"
+                     aria-label="Down payment amount" aria-valuemin="0" aria-valuemax="20000" aria-valuenow="5000" />
+            </div>
+            <div class="calc-row">
+              <label for="finance-term">Loan Term</label>
+              <select id="finance-term" aria-label="Loan term">
+                <option value="24">24 months (0% APR)</option>
+                <option value="36">36 months (~5.99% APR)</option>
+                <option value="48">48 months (~6.49% APR)</option>
+                <option value="60" selected>60 months (~6.99% APR)</option>
+              </select>
+            </div>
+            <div class="finance-result" aria-live="polite">
+              <div class="finance-monthly"><strong id="monthly-calc">$666</strong><span>/month</span></div>
+              <div class="finance-note" id="interest-calc">After $7,500 tax credit &amp; down payment</div>
+            </div>
+            <button class="btn-primary btn-sm" onclick="TeslaAI.trackCTA('Financing','apply')">Apply for Financing</button>
+          </div>
+        </div>
+
+        <!-- Tax Credit -->
+        <div class="sales-card" id="card-taxcredit">
+          <div class="sales-card-icon" aria-hidden="true">$</div>
+          <h3>$7,500 Federal Tax Credit</h3>
+          <p>Model Y and Model 3 both qualify for the full IRA clean vehicle credit — applied instantly at point of sale, no waiting for tax season.</p>
+          <div class="taxcredit-info" role="list">
+            <div class="credit-item" role="listitem">✓ Instant savings at purchase</div>
+            <div class="credit-item" role="listitem">✓ Both Model Y and Model 3 eligible</div>
+            <div class="credit-item" role="listitem">✓ Income limits: $150K single / $300K joint</div>
+            <div class="credit-item" role="listitem">✓ No income limit for leases</div>
+          </div>
+          <div class="eligibility-check">
+            <div class="calc-row">
+              <label for="income-input">Your annual income: $</label>
+              <input type="number" id="income-input" placeholder="e.g. 85000" min="0" aria-label="Annual income" />
+            </div>
+            <button class="btn-primary btn-sm" onclick="TeslaAI.checkEligibility()">Check Eligibility</button>
+            <div id="eligibility-result" style="display:none" aria-live="polite"></div>
+          </div>
+          <button class="btn-text" onclick="TeslaAI.trackCTA('TaxCredit','learn')">Learn more about the credit &rarr;</button>
+        </div>
+
       </div>
     </div>
-    <div class="scroll-indicator" aria-hidden="true"><div class="scroll-arrow"></div></div>
   </section>
 
-  <!-- ── CYBERTRUCK ──────────────────────────────────────────────────────── -->
-  <section class="model-section" id="section-cybertruck" data-model="cybertruck" data-price="60990">
-    <div class="model-bg"></div>
-    <img class="model-vehicle-img"
-         src="https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20231120-Cybertruck-Social.png"
-         onerror="this.style.display='none'"
-         alt="Tesla Cybertruck" loading="lazy" />
-    <div class="model-content">
-      <div class="personalized-badge" id="badge-cybertruck" style="display:none">Recommended for You</div>
-      <h2 class="model-name-label" data-ai="headline">Cybertruck</h2>
-      <p class="model-tagline" data-ai="tagline">Built for the World Outside</p>
-      <p class="model-price" data-ai="price">Starting at $60,990</p>
-      <div class="model-ctas">
-        <button class="cta-btn cta-primary" data-ai="primary-cta"
-                onclick="TeslaAI.trackCTA('Cybertruck','order')">Order Now</button>
-        <button class="cta-btn cta-secondary" data-ai="secondary-cta"
-                onclick="TeslaAI.trackCTA('Cybertruck','demo')">Demo Drive</button>
-      </div>
-    </div>
-    <div class="scroll-indicator" aria-hidden="true"><div class="scroll-arrow"></div></div>
-  </section>
 
-  <!-- ── AI-personalised benefits strip (injected between sections) ──────── -->
-  <div id="benefits-strip" role="complementary" aria-label="Personalised benefits"></div>
-
-  <!-- ── SOLAR + POWERWALL ───────────────────────────────────────────────── -->
-  <section id="section-solar" class="model-section" data-model="solar">
-    <div class="solar-grid-bg" aria-hidden="true"></div>
-    <div class="model-content">
-      <h2 class="model-name-label">Solar &amp; Powerwall</h2>
-      <p class="model-tagline">Power Your Home, Your Car, Your Life</p>
-      <p class="model-price">Solar Panels from $8,500 · Powerwall from $9,200</p>
-      <div class="model-ctas">
-        <button class="cta-btn cta-primary" onclick="TeslaAI.trackCTA('Solar','learn')">Learn More</button>
-        <button class="cta-btn cta-secondary" onclick="TeslaAI.trackCTA('Solar','quote')">Get a Quote</button>
+  <!-- ── §9 TEST DRIVE CTA STRIP ───────────────────────────────────────────── -->
+  <section id="section-testdrive-cta" class="testdrive-cta-section" aria-label="Book a test drive">
+    <div class="testdrive-cta-inner">
+      <h2>Experience It for Yourself</h2>
+      <p>A 30-minute test drive includes Autopilot, a Full Self-Driving demo, and a full walkthrough with a Tesla advisor. No pressure. No obligation.</p>
+      <div class="testdrive-proof" role="list">
+        <span role="listitem">12,000+ test drives this month</span>
+        <span role="listitem">★ 4.9 / 5 average rating</span>
+        <span role="listitem">Available 7 days a week</span>
       </div>
+      <button class="btn-primary btn-large" onclick="TeslaAI.showTestDrive()">Book Your Free Test Drive</button>
     </div>
   </section>
 
@@ -235,24 +580,23 @@
     </div>
     <div class="footer-col">
       <h4>Vehicles</h4>
-      <a href="#">Model S</a>
-      <a href="#">Model 3</a>
-      <a href="#">Model X</a>
-      <a href="#">Model Y</a>
-      <a href="#">Cybertruck</a>
+      <a href="#section-model-y">Model Y</a>
+      <a href="#section-model-3">Model 3</a>
+      <a href="#section-compare">Compare Models</a>
     </div>
     <div class="footer-col">
-      <h4>Energy</h4>
-      <a href="#">Solar Panels</a>
-      <a href="#">Solar Roof</a>
-      <a href="#">Powerwall</a>
-      <a href="#">Megapack</a>
-    </div>
-    <div class="footer-col">
-      <h4>Charging</h4>
+      <h4>Technology</h4>
+      <a href="#section-fsd">Full Self-Driving</a>
+      <a href="#">Autopilot</a>
       <a href="#">Supercharger</a>
       <a href="#">Home Charging</a>
-      <a href="#">Charging Calculator</a>
+    </div>
+    <div class="footer-col">
+      <h4>Financing</h4>
+      <a href="#section-sales">$7,500 Tax Credit</a>
+      <a href="#section-sales">0% Financing</a>
+      <a href="#section-sales">Trade-In Value</a>
+      <a href="#">Tesla Insurance</a>
     </div>
     <div class="footer-col">
       <h4>Support</h4>
@@ -263,72 +607,115 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span>Tesla © 2025. All rights reserved.</span>
-    <div>
-      <a href="#">Privacy &amp; Legal</a> ·
-      <a href="#">Vehicle Recalls</a> ·
-      <a href="#">Contact</a> ·
-      <a href="#" onclick="TeslaAI.showDebug()">⚙ AI Debug</a>
+    <span>Tesla &copy; 2025. All rights reserved.</span>
+    <div class="footer-links">
+      <a href="#">Privacy &amp; Legal</a>
+      <a href="#">Contact</a>
+      <a href="#" onclick="TeslaAI.showDebug(); return false;">AI Debug</a>
     </div>
   </div>
 </footer>
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     CHOICES MODAL — Shown before persona build if first visit
+     TEST DRIVE MODAL — real booking form
      ═══════════════════════════════════════════════════════════════════════ -->
-<div id="choices-modal" class="choices-modal" role="dialog" aria-modal="true"
-     aria-labelledby="choices-title" style="display:none">
-  <div class="choices-modal-inner">
-    <div class="choices-header">
-      <div class="choices-logo">TESLA</div>
-      <h2 id="choices-title">What matters most to you?</h2>
-      <p>Select <strong>3 priorities</strong> to personalise your Tesla experience</p>
-    </div>
-    <div class="choices-grid">
-      <button class="choice-card" data-choice="performance" type="button">
-        <span class="choice-icon">⚡</span>
-        <strong>Performance &amp; Speed</strong>
-        <span>0-60 in seconds, not minutes</span>
-      </button>
-      <button class="choice-card" data-choice="family" type="button">
-        <span class="choice-icon">👨‍👩‍👧</span>
-        <strong>Family &amp; Safety</strong>
-        <span>5-star safety, space for everyone</span>
-      </button>
-      <button class="choice-card" data-choice="eco" type="button">
-        <span class="choice-icon">🌿</span>
-        <strong>Eco &amp; Sustainability</strong>
-        <span>Zero emissions, solar charged</span>
-      </button>
-      <button class="choice-card" data-choice="luxury" type="button">
-        <span class="choice-icon">💎</span>
-        <strong>Luxury &amp; Status</strong>
-        <span>Premium materials, exclusive ownership</span>
-      </button>
-      <button class="choice-card" data-choice="tech" type="button">
-        <span class="choice-icon">🤖</span>
-        <strong>Tech &amp; Autopilot</strong>
-        <span>FSD, OTA updates, AI driving</span>
-      </button>
-      <button class="choice-card" data-choice="value" type="button">
-        <span class="choice-icon">💰</span>
-        <strong>Best Value</strong>
-        <span>Tax credits, fuel savings, low cost</span>
+<div id="testdrive-modal" class="modal-overlay" style="display:none"
+     role="dialog" aria-modal="true" aria-labelledby="td-title"
+     onclick="if(event.target===this)TeslaAI.closeTestDrive()">
+  <div class="modal-inner">
+    <div class="modal-header">
+      <div>
+        <div class="modal-logo">TESLA</div>
+        <h2 id="td-title">Book Your Test Drive</h2>
+        <p>Free, 30-minute experience. No commitment.</p>
+      </div>
+      <button class="modal-close" onclick="TeslaAI.closeTestDrive()" aria-label="Close modal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-    <div class="choices-footer">
-      <span id="choices-count">0 of 3 selected</span>
-      <button id="choices-continue" class="choices-continue-btn" disabled type="button">
-        Continue →
-      </button>
+    <form id="testdrive-form" onsubmit="TeslaAI.submitTestDrive(event)" novalidate>
+      <div class="form-row">
+        <label class="form-field">
+          <span>First Name *</span>
+          <input type="text" name="firstName" required autocomplete="given-name" placeholder="Jane" />
+        </label>
+        <label class="form-field">
+          <span>Last Name *</span>
+          <input type="text" name="lastName" required autocomplete="family-name" placeholder="Smith" />
+        </label>
+      </div>
+      <div class="form-row">
+        <label class="form-field">
+          <span>Email Address *</span>
+          <input type="email" name="email" required autocomplete="email" placeholder="jane@email.com" />
+        </label>
+        <label class="form-field">
+          <span>Phone Number</span>
+          <input type="tel" name="phone" autocomplete="tel" placeholder="+1 (555) 000-0000" />
+        </label>
+      </div>
+      <div class="form-row">
+        <label class="form-field">
+          <span>Preferred Model</span>
+          <select name="model" id="td-model-select">
+            <option value="Model Y">Model Y</option>
+            <option value="Model 3">Model 3</option>
+          </select>
+        </label>
+        <label class="form-field">
+          <span>Preferred Trim</span>
+          <select name="trim" id="td-trim-select">
+            <option>Standard Long Range</option>
+            <option>Premium Long Range</option>
+            <option>Premium AWD</option>
+            <option>Premium Performance</option>
+          </select>
+        </label>
+      </div>
+      <div class="form-row">
+        <label class="form-field">
+          <span>Preferred Date *</span>
+          <input type="date" name="date" id="td-date" required />
+        </label>
+        <label class="form-field">
+          <span>Preferred Time</span>
+          <select name="time">
+            <option>Morning (9am–12pm)</option>
+            <option selected>Afternoon (12pm–4pm)</option>
+            <option>Evening (4pm–7pm)</option>
+          </select>
+        </label>
+      </div>
+      <label class="form-field">
+        <span>Nearest City or Location *</span>
+        <input type="text" name="location" required autocomplete="address-level2" placeholder="City, State or Zip Code" />
+      </label>
+      <div class="form-interests">
+        <p>What are you most excited about? <em>(optional)</em></p>
+        <div class="interests-grid">
+          <label class="interest-item"><input type="checkbox" name="interests" value="fsd" /> Full Self-Driving</label>
+          <label class="interest-item"><input type="checkbox" name="interests" value="range" /> Range &amp; Charging</label>
+          <label class="interest-item"><input type="checkbox" name="interests" value="performance" /> Performance</label>
+          <label class="interest-item"><input type="checkbox" name="interests" value="family" /> Family Features</label>
+        </div>
+      </div>
+      <div id="td-error" class="form-error" style="display:none" role="alert"></div>
+      <button type="submit" class="btn-primary btn-full" id="td-submit">Confirm Test Drive</button>
+      <p class="form-legal">By submitting you agree to be contacted by Tesla regarding your test drive request. No spam, ever.</p>
+    </form>
+    <div id="testdrive-success" style="display:none" class="success-state" role="status">
+      <div class="success-icon" aria-hidden="true">✓</div>
+      <h3>You're booked!</h3>
+      <p>Check your email for confirmation details. We look forward to meeting you.</p>
+      <button class="btn-secondary" onclick="TeslaAI.closeTestDrive()">Close</button>
     </div>
   </div>
 </div>
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     PERSONA RESULT CARD — shown after persona analysis completes
+     PERSONA RESULT CARD
      ═══════════════════════════════════════════════════════════════════════ -->
 <div id="persona-result" class="persona-result" role="complementary"
      aria-label="Your AI Profile" style="display:none">
@@ -342,7 +729,7 @@
 <button id="ai-assistant-btn" class="ai-assistant-btn" type="button"
         style="display:none" aria-label="Open AI Persona Assistant"
         onclick="TeslaAI.toggleAssistant()">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
        stroke="currentColor" stroke-width="2" aria-hidden="true">
     <circle cx="12" cy="12" r="10"/>
     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
@@ -353,7 +740,7 @@
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     AI ASSISTANT PANEL — slide-in drawer showing all data sources
+     AI ASSISTANT PANEL
      ═══════════════════════════════════════════════════════════════════════ -->
 <div id="ai-panel-overlay" class="ai-panel-overlay" style="display:none"
      onclick="TeslaAI.closeAssistant()"></div>
@@ -363,10 +750,9 @@
   <div class="ai-panel-header">
     <div>
       <div class="ai-panel-title">⚡ AI Persona Assistant</div>
-      <div class="ai-panel-subtitle">How we built your personalised experience</div>
+      <div class="ai-panel-subtitle">How we personalised your experience</div>
     </div>
-    <button class="ai-panel-close" onclick="TeslaAI.closeAssistant()"
-            aria-label="Close panel">✕</button>
+    <button class="ai-panel-close" onclick="TeslaAI.closeAssistant()" aria-label="Close panel">✕</button>
   </div>
   <div class="ai-panel-body" id="ai-panel-body">
     <p style="color:rgba(255,255,255,0.35);padding:20px;font-size:0.8rem">
@@ -377,7 +763,7 @@
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     DEBUG PANEL — Activate via ?debug=1 or clicking "AI Debug" in footer
+     DEBUG PANEL
      ═══════════════════════════════════════════════════════════════════════ -->
 <div id="debug-panel" role="complementary" aria-label="AI Persona Debug">
   <div class="debug-header">
@@ -391,7 +777,7 @@
 
 
 <!-- ═══════════════════════════════════════════════════════════════════════
-     SCRIPTS — loaded in dependency order
+     SCRIPTS
      ═══════════════════════════════════════════════════════════════════════ -->
 <script src="/js/CookieAnalyzer.js"></script>
 <script src="/js/PersonaCreator.js"></script>

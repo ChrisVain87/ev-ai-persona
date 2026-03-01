@@ -58,45 +58,71 @@ class ContentEngine {
     this._injectBenefits(content);
     this._reorderSections(content.sectionOrder);
     this._injectNavCTA(content, abVariant);
+    this._injectEducation(content);
+    this._injectFSD(content);
+    this._injectSalesProgram(content);
   }
 
   // ── Hero section ─────────────────────────────────────────────────────────
   _injectHero(c, variant) {
     this._setText('[data-ai="hero-headline"]', c.heroHeadline);
     this._setText('[data-ai="hero-subheadline"]', c.heroSubheadline);
-    this._setText('[data-ai="hero-primary-cta"]', variant === 'B' ? (c.ctaVariantB || c.heroPrimaryCTA) : c.heroPrimaryCTA);
-    this._setText('[data-ai="hero-secondary-cta"]', c.heroSecondaryCTA);
-    this._setText('[data-ai="hero-model-label"]', `${c.heroModel} ${c.heroTrim}`);
+    this._setText('#hero-primary-cta', variant === 'B' ? (c.ctaVariantB || c.heroPrimaryCTA) : c.heroPrimaryCTA);
+    this._setText('#hero-secondary-cta', c.heroSecondaryCTA);
 
-    // Switch hero section to recommended model's theme
-    const heroSection = document.getElementById('section-hero');
-    if (heroSection && c.heroModel) {
-      heroSection.setAttribute('data-active-model', c.heroModel.toLowerCase().replace(/\s/g, '-'));
-      // Update background class
-      heroSection.className = heroSection.className.replace(/model-\S+/g, '') + ' model-' + c.heroModel.toLowerCase().replace(/\s/g, '-').replace('model-', '');
+    // Swap hero car image based on recommended model
+    const heroImg = document.getElementById('hero-model-img');
+    if (heroImg && c.heroModel) {
+      const IMAGES = {
+        'Model Y': 'https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20220303-Model-Y-Social.png',
+        'Model 3': 'https://digitalassets.tesla.com/tesla-cms/image/upload/f_auto,q_auto/v1/cms-assets/20240320-Model-3-Social.png'
+      };
+      if (IMAGES[c.heroModel]) heroImg.src = IMAGES[c.heroModel];
+      heroImg.alt = `Tesla ${c.heroModel}`;
     }
 
-    // Price emphasis
-    const priceEl = document.querySelector('[data-ai="hero-price"]');
-    if (priceEl && c.priceEmphasis === 'monthly') {
-      const prices = { 'Model Y': 47990, 'Model 3': 42990, 'Model S': 74990, 'Model X': 79990, 'Cybertruck': 79990 };
-      const base = prices[c.heroModel] || 47990;
-      priceEl.textContent = `From $${Math.round(base / 72).toLocaleString()}/mo`;
+    // Set personalized badge
+    const badge = document.getElementById('hero-personalized-badge');
+    if (badge && c.heroModel && c.heroTrim) {
+      badge.textContent = `Recommended: ${c.heroModel} ${c.heroTrim}`;
     }
   }
 
   // ── Individual model sections ─────────────────────────────────────────────
   _injectSections(c, variant) {
     if (!c.sections) return;
+    // Only process Model Y and Model 3
+    const ALLOWED = ['Model Y', 'Model 3'];
     for (const [model, s] of Object.entries(c.sections)) {
+      if (!ALLOWED.includes(model)) continue;
       const slug = model.toLowerCase().replace(/\s/g, '-');
       const sec  = document.getElementById(`section-${slug}`);
       if (!sec) continue;
 
-      this._setText(`#section-${slug} [data-ai="headline"]`,     s.headline);
-      this._setText(`#section-${slug} [data-ai="tagline"]`,      s.tagline);
-      this._setText(`#section-${slug} [data-ai="primary-cta"]`,  variant === 'B' ? (s.primaryCTA || 'Order Now') : 'Order Now');
-      this._setText(`#section-${slug} [data-ai="secondary-cta"]`,s.secondaryCTA || 'Demo Drive');
+      this._setText(`#section-${slug} [data-ai="headline"]`,      s.headline);
+      this._setText(`#section-${slug} [data-ai="tagline"]`,       s.tagline);
+      this._setText(`#section-${slug} [data-ai="primary-cta"]`,   variant === 'B' ? (s.primaryCTA || 'Order Now') : 'Order Now');
+      this._setText(`#section-${slug} [data-ai="secondary-cta"]`, s.secondaryCTA || 'Book Test Drive');
+
+      // Pre-select AI recommended trim
+      if (s.recommendedTrim) {
+        const TRIM_MAP = {
+          'Standard': 'standard',
+          'Standard Long Range': 'standard-lr',
+          'Premium Long Range': 'premium-lr',
+          'Premium AWD': 'premium-awd',
+          'Premium Performance': 'premium-perf'
+        };
+        const trimKey = TRIM_MAP[s.recommendedTrim];
+        if (trimKey) {
+          const selector = sec.querySelector(`.trim-selector`);
+          if (selector) {
+            selector.querySelectorAll('.trim-btn').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.trim === trimKey);
+            });
+          }
+        }
+      }
     }
   }
 
@@ -119,6 +145,7 @@ class ContentEngine {
     container.innerHTML = c.personalizedBenefits
       .map(b => `<div class="benefit-item"><span class="benefit-check">✓</span> ${b}</div>`)
       .join('');
+    container.style.display = 'flex';
     container.classList.add('visible');
   }
 
@@ -132,18 +159,42 @@ class ContentEngine {
   // ── Reorder sections ──────────────────────────────────────────────────────
   _reorderSections(order) {
     if (!order?.length) return;
-    const container = document.getElementById('models-container');
-    if (!container) return;
-
-    order.forEach((model, i) => {
+    // Only reorder Model Y and Model 3 sections
+    const ALLOWED = ['Model Y', 'Model 3'];
+    order.filter(m => ALLOWED.includes(m)).forEach((model, i) => {
       const slug = model.toLowerCase().replace(/\s/g, '-');
       const el   = document.getElementById(`section-${slug}`);
       if (el) {
-        el.style.order = i;           // CSS flexbox order
+        el.style.order = i;
         el.dataset.rank = i;
         if (i === 0) el.classList.add('hero-model');
       }
     });
+  }
+
+  // ── Education section toggle ───────────────────────────────────────────────
+  _injectEducation(c) {
+    if (c.showEducationSection) {
+      const el = document.getElementById('section-education');
+      if (el) el.style.display = 'block';
+    }
+  }
+
+  // ── FSD promotion ─────────────────────────────────────────────────────────
+  _injectFSD(c) {
+    if (c.promoteFSD) {
+      document.querySelectorAll('[data-ai="fsd-cta"]').forEach(el => {
+        el.style.color = 'var(--red)';
+      });
+    }
+  }
+
+  // ── Featured sales program ────────────────────────────────────────────────
+  _injectSalesProgram(c) {
+    if (c.featuredSalesProgram) {
+      const el = document.getElementById(`card-${c.featuredSalesProgram}`);
+      if (el) el.classList.add('featured-card');
+    }
   }
 
   // ── Loading screen helpers ────────────────────────────────────────────────
