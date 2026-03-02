@@ -208,11 +208,9 @@ class ContentEngine {
       setTimeout(() => {
         const el = document.getElementById('loading-screen');
         if (el) {
-          el.classList.add('fade-out');
-          el.addEventListener('transitionend', () => {
-            el.classList.remove('active', 'fade-out');
-            resolve();
-          }, { once: true });
+          const fallback = setTimeout(() => resolve(), 600);
+          el.addEventListener('transitionend', () => { clearTimeout(fallback); resolve(); }, { once: true });
+          el.classList.remove('active');  // triggers opacity:0 via :not(.active) CSS rule
         } else {
           resolve();
         }

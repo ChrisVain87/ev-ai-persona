@@ -1455,6 +1455,10 @@ footer {
 .score-bar-fill.orange { background: var(--amber); }
 .score-num { font-size: 0.65rem; color: rgba(255,255,255,0.4); min-width: 20px; text-align: right; }
 
+/* ── Section reordering (JS sets style.order on model sections) ─────────────── */
+#main-content { display: flex; flex-direction: column; }
+#main-content > * { width: 100%; }
+
 /* ── Responsive ─────────────────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .edu-grid { grid-template-columns: repeat(2, 1fr); }

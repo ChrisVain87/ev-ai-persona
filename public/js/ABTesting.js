@@ -222,7 +222,7 @@ class ABTesting {
       for (let i = 4; i >= 0; i--) poly = poly * z + a[i];
       return sign * (1 - poly * z * Math.exp(-t * t));
     };
-    return erfc(-Math.sqrt(x)) - 1;  // clamp via erf
+    return erfc(Math.sqrt(x));  // erf(sqrt(x)) = chi-square CDF for df=1
   }
 }
 
